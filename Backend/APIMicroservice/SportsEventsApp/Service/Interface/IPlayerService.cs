@@ -10,5 +10,7 @@ namespace Service.Interface
     public interface IPlayerService
     {
         public Task<PlayerDTO> GetPlayerInfo(int id);
+
+        public Task<List<TopScorerDTO>> TopScorersFromCompId(int id);
     }
 }

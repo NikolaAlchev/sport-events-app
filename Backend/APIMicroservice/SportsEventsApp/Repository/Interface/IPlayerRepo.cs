@@ -10,5 +10,6 @@ namespace Repository.Interface
     public interface IPlayerRepo
     {
         public Task<PlayerDTO> GetPlayer(int id);
+        public Task<List<TopScorerDTO>> TopScorersFromCompId(int id);
     }
 }

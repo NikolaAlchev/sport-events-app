@@ -5,7 +5,7 @@ using Service.Interface;
 
 namespace Web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PlayerController : ControllerBase
     {
@@ -20,6 +20,13 @@ namespace Web.Controllers
         public async Task<PlayerDTO> GetPlayerInfo(int id)
         {
             return await _playerService.GetPlayerInfo(id);
+        }
+
+
+        [HttpGet("{competitionId}/topScorers")]
+        public async Task<List<TopScorerDTO>> GetTopScorersFromComp(int competitionId)
+        {
+            return await _playerService.TopScorersFromCompId(competitionId);
         }
     }
 }

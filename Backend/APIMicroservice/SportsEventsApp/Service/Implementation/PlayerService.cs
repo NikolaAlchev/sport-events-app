@@ -22,5 +22,10 @@ namespace Service.Implementation
         {
             return await _playerRepo.GetPlayer(id);
         }
+
+        public async Task<List<TopScorerDTO>> TopScorersFromCompId(int id)
+        {
+            return await _playerRepo.TopScorersFromCompId(id);
+        }
     }
 }
