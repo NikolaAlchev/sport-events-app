@@ -18,7 +18,20 @@ builder.Services.AddTransient<ICompetitionsService, CompetitionsService>();
 builder.Services.AddTransient<ITeamService, TeamService>();
 builder.Services.AddTransient<IPlayerService, PlayerService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -32,6 +45,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors("AllowAllOrigins");
+
 
 app.UseAuthorization();
 
