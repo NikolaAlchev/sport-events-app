@@ -12,8 +12,10 @@ namespace Service.Implementation
     public class MatchesService : IMatchesService
     {
         private IMatchesRepo _matchesRepo;
-        public MatchesService(IMatchesRepo matchesRepo) { 
+        private ICompetitionsRepo _competitionsRepo;
+        public MatchesService(IMatchesRepo matchesRepo, ICompetitionsRepo competitionsRepo) { 
             _matchesRepo = matchesRepo;
+            _competitionsRepo = competitionsRepo;
         }
         public async Task<List<MatchDTO>> getAllMatchesFromDate(DateOnly dateFrom)
         {
@@ -29,5 +31,33 @@ namespace Service.Implementation
         {
             return await _matchesRepo.getStandingsTable(compId);
         }
+
+        public async Task<List<StandingsTableDTO>> getStandingsTableForComp(int homeTeamId, int awayTeamId)
+        {
+            int homeTeamLeagueId = await _competitionsRepo.standingsForLeagueFromTeamId(homeTeamId);
+            if (homeTeamLeagueId == 0)
+            {
+                throw new Exception("no league found for the home team");
+            }
+            int awayTeamLeagueId = await _competitionsRepo.standingsForLeagueFromTeamId(awayTeamId);
+            if (awayTeamLeagueId == 0)
+            {
+                throw new Exception("no league found for the away team");
+            }
+
+            var res = new List<StandingsTableDTO>();
+            if (homeTeamLeagueId != awayTeamLeagueId)
+            {
+
+                res.Add(await _matchesRepo.getStandingsTable(homeTeamLeagueId));
+                res.Add(await _matchesRepo.getStandingsTable(awayTeamId));
+                return res;
+            }
+
+            res.Add(await _matchesRepo.getStandingsTable(homeTeamLeagueId));
+            return res;
+        }
+
+
     }
 }

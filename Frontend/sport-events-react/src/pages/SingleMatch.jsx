@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 
-
+//http://localhost:3000/matches/502427
 
 function SingleMatch() {
     const [data, setData] = useState(null);

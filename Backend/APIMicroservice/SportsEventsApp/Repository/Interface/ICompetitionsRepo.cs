@@ -12,5 +12,6 @@ namespace Repository.Interface
 
         public Task<List<CompetitionDTO>> getAllCompetitions();
         public Task<List<TeamDTO>>getAllTeamsFromCompetition(int id);
+        public Task<int> standingsForLeagueFromTeamId(int id);
     }
 }

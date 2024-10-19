@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
+//http://localhost:3000/matches/502427/standings?homeTeam=4&awayTeam=20
 
-
-function SingleMatch() {
+function SingleMatchStandings() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { id } = useParams(); // /matches/:id
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
 
+        const homeTeamId = searchParams.get("homeTeam")
+        const awayTeamId = searchParams.get("awayTeam")
+
+
         // Make GET request
-        fetch(`http://localhost:5260/matches/${id}`)
+        fetch(`http://localhost:5260/matches/team/standings?homeTeam=${homeTeamId}&awayTeam=${awayTeamId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                // console.log(response.json())
                 return response.json();
             })
             .then((data) => {
@@ -46,4 +49,4 @@ function SingleMatch() {
     );
 };
 
-export default SingleMatch;
+export default SingleMatchStandings;

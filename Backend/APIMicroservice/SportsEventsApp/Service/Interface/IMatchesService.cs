@@ -11,6 +11,6 @@ namespace Service.Interface
     {
         public Task<List<MatchDTO>> getAllMatchesFromDate(DateOnly dateFrom);
         public Task<MatchDTO> getMatchById(int id);
-        public Task<StandingsTableDTO> getStandingsTableForComp(int compId);
+        public Task<List<StandingsTableDTO>> getStandingsTableForComp(int homeTeamId, int awayTeamId);
     }
 }
