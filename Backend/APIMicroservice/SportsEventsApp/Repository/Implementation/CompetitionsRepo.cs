@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -116,6 +117,50 @@ namespace Repository.Implementation
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return null;
             }
+        }
+
+        public async Task<int> standingsForLeagueFromTeamId(int id)
+        {
+            string url = $"https://api.football-data.org/v4/teams/{id}";
+           
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var jsonDocument = JsonDocument.Parse(jsonResponse);
+                    var competitionsArray = jsonDocument.RootElement.GetProperty("runningCompetitions");
+                    
+
+                    foreach (var comp in competitionsArray.EnumerateArray())
+                    {
+                        var compType = comp.GetProperty("type").ToString();
+
+                        if (compType == "LEAGUE")
+                        {
+                            return comp.GetProperty("id").GetInt32();
+                            
+                        }
+                     
+                    }
+                    return 0;
+                }
+                else
+                {
+                    // Handle non-success status codes here
+                    throw new Exception($"Request failed with status code: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return 0;
+            }
+
+           
         }
     }
 }

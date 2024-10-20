@@ -26,5 +26,6 @@ namespace Service.Implementation
         {
             return await _competitionsRepo.getAllTeamsFromCompetition(id);
         }
+
     }
 }

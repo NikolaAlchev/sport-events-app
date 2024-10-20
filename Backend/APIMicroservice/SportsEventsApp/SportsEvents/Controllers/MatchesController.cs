@@ -28,10 +28,10 @@ namespace Web.Controllers
             return await _matchesService.getMatchById(id);
         }
 
-        [HttpGet("team/standings/{id}")]
-        public async Task<StandingsTableDTO> getStandings(int id)
+        [HttpGet("team/standings")]
+        public async Task<List<StandingsTableDTO>> getStandings(int homeTeam, int awayTeam)
         {
-            return await _matchesService.getStandingsTableForComp(id);
+            return await _matchesService.getStandingsTableForComp(homeTeam, awayTeam);
         }
 
         
