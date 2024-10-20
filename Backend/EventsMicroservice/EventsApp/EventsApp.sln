@@ -3,7 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsApp", "EventsApp\EventsApp.csproj", "{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventsApp", "EventsApp\EventsApp.csproj", "{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{9608FB2C-699F-4725-A392-CF44BD7D67A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{7E9FDCE5-379B-4043-9DC8-51FB1534153C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9884AA05-B85D-4F60-98DC-0143F1F1A5FC}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +26,18 @@ Global
 		{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9608FB2C-699F-4725-A392-CF44BD7D67A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9608FB2C-699F-4725-A392-CF44BD7D67A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9608FB2C-699F-4725-A392-CF44BD7D67A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9608FB2C-699F-4725-A392-CF44BD7D67A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
