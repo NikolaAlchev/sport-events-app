@@ -71,5 +71,12 @@ namespace Repository.Implementation
             context.SaveChanges();
             return entities;
         }
+        public IEnumerable<T> GetAllPaginated(int offset, int limit)
+        {
+            return entities.AsEnumerable()
+                              .Skip(offset)
+                              .Take(limit)
+                              .ToList(); 
+        }
     }
 }

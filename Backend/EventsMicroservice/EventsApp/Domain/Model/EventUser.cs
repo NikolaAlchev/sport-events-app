@@ -2,7 +2,7 @@
 
 namespace Domain.Model
 {
-    public class EventUser
+    public class EventUser : BaseEntity
     {
         public Guid? EventId { get; set; }
         public Event? Event { get; set; }
