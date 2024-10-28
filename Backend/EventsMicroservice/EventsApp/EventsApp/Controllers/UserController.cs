@@ -56,7 +56,7 @@ namespace EventsApp.Controllers
             if (result.Succeeded)
             {
 
-                var roleResult = await _userManager.AddToRoleAsync((EventsAppUser) user, "User");
+                var roleResult = await _userManager.AddToRoleAsync( user, "User");
                 if (!roleResult.Succeeded)
                 {
                     return BadRequest(roleResult.Errors);
@@ -93,7 +93,6 @@ namespace EventsApp.Controllers
 
             return BadRequest(result.Errors);
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
@@ -102,6 +101,7 @@ namespace EventsApp.Controllers
             {
                 return Unauthorized(new { message = "Invalid username or password" });
             }
+
             var userRoles = await _userManager.GetRolesAsync(user);
             if (!userRoles.Contains("User"))
             {
@@ -112,34 +112,37 @@ namespace EventsApp.Controllers
                 }
             }
 
-            var token = GenerateJwtToken(user);
+            var token = await GenerateJwtToken(user);
             var cookieOptions = new CookieOptions
             {
-                HttpOnly = true,   // Cannot be accessed via JavaScript
-                Secure = true,     // Only send over HTTPS
-                Expires = DateTime.UtcNow.AddHours(2), // Set expiration
-                SameSite= SameSiteMode.None
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddHours(2),
+                SameSite = SameSiteMode.None
             };
 
             Response.Cookies.Append("jwt", token, cookieOptions);
             return Ok(new { message = "Logged in successfully" });
         }
 
-        private string GenerateJwtToken(EventsAppUser user)
+        private async Task<string> GenerateJwtToken(EventsAppUser user)
         {
             var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id)
-        };
+            {
+/*                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), -> defaults*/  
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
+            };
 
-            var roles = _userManager.GetRolesAsync(user).Result;
+            // Retrieve user roles and add them to claims
+            var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
+            // Token generation settings
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -147,14 +150,14 @@ namespace EventsApp.Controllers
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         [HttpGet("validate")]
-        public IActionResult SomeProtectedEndpoint()
+        public IActionResult Validation()
         {
             // Check if the cookie exists
             if (Request.Cookies.TryGetValue("jwt", out string token))

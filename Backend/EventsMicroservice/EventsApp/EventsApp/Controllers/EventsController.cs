@@ -88,7 +88,6 @@ namespace EventsApp.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize(Roles = "User")]
         public void RegisterForEvent([FromBody] UserToEventDTO userEvent) 
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
