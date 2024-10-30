@@ -61,6 +61,25 @@ builder.Services.AddAuthentication(options =>
     // Add event logging for troubleshooting token validation
     options.Events = new JwtBearerEvents
     {
+        OnMessageReceived = context =>
+        {
+            // Check if the token is available in the Cookie header
+            if (context.Request.Headers.ContainsKey("Cookie"))
+            {
+                // Extract the token from the Cookie header
+                var cookieHeader = context.Request.Headers["Cookie"].ToString();
+                var token = cookieHeader.Split("; ")
+                    .FirstOrDefault(c => c.StartsWith("jwt="))?.Split("=")[1];
+
+                // Set the token in context if found
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+            }
+
+            return Task.CompletedTask;
+        },
         OnAuthenticationFailed = context =>
         {
             Console.WriteLine($"Authentication failed: {context.Exception.Message}");
@@ -72,7 +91,31 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         }
     };
-}).AddCookie(options =>
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Check if the token is available in the Cookie header
+            if (context.Request.Headers.ContainsKey("Cookie"))
+            {
+                // Extract the token from the Cookie header
+                var cookieHeader = context.Request.Headers["Cookie"].ToString();
+                var token = cookieHeader.Split("; ")
+                    .FirstOrDefault(c => c.StartsWith("jwt="))?.Split("=")[1];
+
+                // Set the token in context if found
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+    };
+})
+.AddCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use Always in production

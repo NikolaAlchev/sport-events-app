@@ -101,17 +101,6 @@ namespace EventsApp.Controllers
             {
                 return Unauthorized(new { message = "Invalid username or password" });
             }
-
-            var userRoles = await _userManager.GetRolesAsync(user);
-            if (!userRoles.Contains("User"))
-            {
-                var roleResult = await _userManager.AddToRoleAsync(user, "User");
-                if (!roleResult.Succeeded)
-                {
-                    return StatusCode(500, new { message = "Failed to assign user role" });
-                }
-            }
-
             var token = await GenerateJwtToken(user);
             var cookieOptions = new CookieOptions
             {
