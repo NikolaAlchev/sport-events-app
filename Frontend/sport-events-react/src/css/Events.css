@@ -1,0 +1,21 @@
+#events-content{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#events-top-container{
+    background-color: white;
+    margin: 11px;
+    border-radius: 10px;
+    background-image: url("https://s3-alpha-sig.figma.com/img/8e87/f396/5bb6cdd58fdccad48a4414e14405c76c?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eRVakKFgZIPVcp30mNhANzbJy0-078oqPBX1ybO1wlZ94CmEy9BJYYEpUB7Gb7R54gZseZPr9somaxxkOzCzJGPv5csokoktnGwa5mNPLhQ-WOXuzxsJzoIHKFrDYHx9h~e5apzM7doGc3nGBwdSFwlduEC1GMg4J8WyIlsSGhS6i~8cHyvdwmewB8Csa1AgCcsRBOB9q5wkVBR1FtgSYotbxjnKX9m-8q7KS29OFpzeChEKej-ILHVc4XUFfBvV8KLWftM7stcTv4TgF~NRGlaokdPvM4eKBztitygxw7lxzSyUYwD6~QoHZL2SscckJlr~FJhdkSupdiaTm-Ezsw__");
+    height: 60vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#events-bottom-container{
+    margin-top: 70px;
+}
