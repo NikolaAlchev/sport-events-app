@@ -8,7 +8,7 @@ namespace Domain.DTO
 {
     public class UserToEventDTO
     {
-        public string EventId { get; set; }
+        public Guid EventId { get; set; }
 
 
     }

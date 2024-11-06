@@ -8,6 +8,11 @@ namespace Domain.Model
 {
     public class Event : BaseEntity
     {
+        public Event()
+        {
+            Users = new List<EventUser>();
+        }
+
         public string? Title { get; set; }
         public string? Country { get; set; }
         public string? Address { get; set; }
@@ -23,7 +28,7 @@ namespace Domain.Model
         public int? Price { get; set; }
         public string? Label { get; set; }
         public string? Description { get; set; }
-        public virtual ICollection<EventUser>? Users { get; set; }
+        public ICollection<EventUser> Users { get; set; }
 
     }
 }

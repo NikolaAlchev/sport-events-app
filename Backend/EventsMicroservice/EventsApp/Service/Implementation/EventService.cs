@@ -56,7 +56,8 @@ namespace Service.Implementation
 
         public EventUser reserveSeatForUserOnEvent(string UserId, Guid EventId)
         {
-            var sportsEvent= _eventRepository.Get(EventId);
+            var sportsEvent = _eventsRepository.GetEventWithUsers(EventId);
+
             DateTime resDate = sportsEvent.Date.Value.Date.AddDays(-1); // Adjust the event date to the day before
             TimeOnly timeClosedRes = sportsEvent.ReservationCloseTime.Value;
             DateTime now = DateTime.Now;
@@ -77,7 +78,7 @@ namespace Service.Implementation
                     throw new InvalidOperationException("Cannot reserve a seat. The event reservation has already ended.");
                 }
             }
-            List<EventUser> eventUsers = _eventsRepository.getEventUsers(EventId);
+            List<EventUser> eventUsers = sportsEvent.Users.ToList();
             if (eventUsers.Count() == sportsEvent.Capacity.Value)
             {
                 throw new Exception("No seats available, the event is booked");
@@ -86,12 +87,9 @@ namespace Service.Implementation
             if (eventUsers.Find(i => i.User.Id.Equals(UserId)) == null)
             {
 
-                if (_eventUserRepository.getEventUser(UserId, EventId) == null)
-                {
                     var eventUser = _eventUserRepository.AddEventUser(UserId, EventId);
                     return eventUser;
-                }
-                throw new Exception("An Error occured");
+
             }
             throw new Exception("Can't Reserve more then 1 seat");
 

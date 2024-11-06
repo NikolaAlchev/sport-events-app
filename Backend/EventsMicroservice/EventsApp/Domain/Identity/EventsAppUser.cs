@@ -5,6 +5,6 @@ namespace Domain.Identity
 {
     public class EventsAppUser : IdentityUser
     {
-        public virtual ICollection<EventUser>? Events { get; set; }
+        public ICollection<EventUser>? Events { get; set; }
     }
 }

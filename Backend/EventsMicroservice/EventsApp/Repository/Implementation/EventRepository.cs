@@ -17,6 +17,16 @@ namespace Repository.Implementation
         {
             _context = context;
         }
+
+
+        public Event GetEventWithUsers(Guid eventId) {
+
+            return _context.Events
+                .Where(i => i.Id.Equals(eventId)).FirstOrDefault();
+        
+        }   
+
+
         public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating)
         {
             //fix price filter 
@@ -76,16 +86,20 @@ namespace Repository.Implementation
             {
                 
                 var eventEntity = _context.Events
-                    .Include(i => i.Users)
-                    .FirstOrDefault(i => i.Id == eventId);
+                    .Where(i => i.Id.Equals(eventId))
+                    .FirstOrDefault()?.Users?.ToList();
 
-                                if (eventEntity == null)
+               if (eventEntity == null)
                 {
                     throw new Exception($"Event with ID {eventId} not found.");
                 }
 
-                
-                return eventEntity.Users?.ToList() ?? new List<EventUser>();
+
+                if (eventEntity.Count.Equals(0))
+                {
+                    return new List<EventUser> ();
+                }
+                return eventEntity;
             }
             catch (Exception ex)
             {

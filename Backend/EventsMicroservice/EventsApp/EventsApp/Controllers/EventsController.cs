@@ -98,7 +98,7 @@ namespace EventsApp.Controllers
                 throw new UnauthorizedAccessException("User ID could not be found.");
             }
 
-            _eventService.reserveSeatForUserOnEvent(userId, Guid.Parse(userEvent.EventId));
+            _eventService.reserveSeatForUserOnEvent(userId, userEvent.EventId);
 
         }
     }

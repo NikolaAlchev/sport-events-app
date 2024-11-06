@@ -20,13 +20,13 @@ namespace Repository.Implementation
 
         public EventUser getEventUser(string userId, Guid eventId)
         {
-            return _context.EventUsers.Where(i => i.EventId.Equals(eventId)).Where(i => i.UserId.Equals(userId)).First();
+            return _context.EventUsers.Where(i => i.EventId.Equals(eventId) && i.UserId.Equals(userId)).First();
         }
 
         public EventUser AddEventUser(string userId, Guid eventId)
         {
-            var user  = _context.Users.Where(i => i.Id.Equals(Guid.Parse(userId))).First();
-            var eventFromEventId = _context.Events.Include(i => i.Users).Where(i => i.Id.Equals(eventId)).First();
+            var user  = _context.Users.Where(i => i.Id.Equals(userId)).First();
+            var eventFromEventId = _context.Events.Where(i => i.Id.Equals(eventId)).First();
 
             var newEventUser = new EventUser
             {
