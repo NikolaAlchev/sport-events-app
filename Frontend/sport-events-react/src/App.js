@@ -16,9 +16,12 @@ import Events from './pages/Events';
 import SingleEvent from './pages/SingleEvent';
 import CreateUser from './pages/CreateUser';
 import LoginUser from "./pages/LoginUser"
+import Navbar from "./components/Navbar"
+
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/matches" element={<Matches />} />
         <Route path="/matches/:id" element={<SingleMatch />} />

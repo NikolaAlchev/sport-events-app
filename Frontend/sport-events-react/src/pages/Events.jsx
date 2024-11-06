@@ -1,6 +1,7 @@
 import CustomCard from "../components/CustomCard";
 import React, { useEffect, useState } from "react";
 import styles from "../css/FilterDiv.module.css"
+import "../css/Events.css";
 import { Row, Col, Container, Button, Form } from 'react-bootstrap';
 
 function Events() {
@@ -94,8 +95,12 @@ function Events() {
     }
 
     return (
+        <div id="events-content">
+            <div id="events-top-container">
 
-        <Container className={styles.container}>
+            </div>
+            <div id="events-bottom-container">
+            <Container className={styles.container}>
             <Row>
                 {/* Left Filter Section */}
                 <Col xs={12} sm={6} md={3} lg={3} xl={2} className={styles.filterDiv}>
@@ -176,6 +181,11 @@ function Events() {
                 </Row>
             </Row>
         </Container>
+        </div>
+        
+        </div>
+
+        
 
 
     )
