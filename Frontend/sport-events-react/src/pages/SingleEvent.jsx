@@ -79,7 +79,7 @@ function SingleEvent() {
                         // If forbidden, redirect to login
                         navigate('/user/login');
                     } else {
-                        alert('There was an error registering for the event. Try again later.');
+                        alert("Can't Reserve more then 1 seat");
                     }
                 })
                 .catch(() => {

@@ -57,6 +57,7 @@ namespace Service.Implementation
         public EventUser reserveSeatForUserOnEvent(string UserId, Guid EventId)
         {
             var sportsEvent = _eventsRepository.GetEventWithUsers(EventId);
+            var userIds = _eventUserRepository.getUsersFromEvent(EventId);
 
             DateTime resDate = sportsEvent.Date.Value.Date.AddDays(-1); // Adjust the event date to the day before
             TimeOnly timeClosedRes = sportsEvent.ReservationCloseTime.Value;
@@ -84,9 +85,8 @@ namespace Service.Implementation
                 throw new Exception("No seats available, the event is booked");
 
             }
-            if (eventUsers.Find(i => i.User.Id.Equals(UserId)) == null)
+            if (!userIds.Contains(UserId))
             {
-
                     var eventUser = _eventUserRepository.AddEventUser(UserId, EventId);
                     return eventUser;
 

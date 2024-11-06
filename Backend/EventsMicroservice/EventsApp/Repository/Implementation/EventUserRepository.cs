@@ -36,13 +36,15 @@ namespace Repository.Implementation
                 User = user
             };
             _context.EventUsers.Add(newEventUser);
-
-            eventFromEventId.Users.Add(newEventUser);
-
-
+    
             _context.SaveChanges();
 
             return newEventUser;
+        }
+
+        public List<string> getUsersFromEvent(Guid EventId)
+        {
+            return _context.EventUsers.Where(i => i.EventId.Equals(EventId)).Select(e => e.UserId).ToList();
         }
     }
 }

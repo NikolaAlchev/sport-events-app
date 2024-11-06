@@ -15,6 +15,7 @@ function TopScorers() {
         fetch(`http://localhost:5260/player/${id}/topScorers`)
             .then((response) => {
                 if (!response.ok) {
+
                     throw new Error("Network response was not ok");
                 }
                 // console.log(response.json())

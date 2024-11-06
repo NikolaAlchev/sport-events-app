@@ -11,5 +11,6 @@ namespace Repository.Interface
     {
         public EventUser getEventUser(string userId, Guid eventId);
         public EventUser AddEventUser(string userId, Guid eventId);
+        public List<string> getUsersFromEvent(Guid EventId);
     }
 }

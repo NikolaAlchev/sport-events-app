@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Service.Interface;
 
 namespace EventsApp.Controllers
 {
@@ -16,10 +17,12 @@ namespace EventsApp.Controllers
     {
         private readonly UserManager<EventsAppUser> _userManager;
         private readonly IConfiguration _configuration;
+
         public UserController(UserManager<EventsAppUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
+      
         }
 
         // GET: api/User/GetAllUsers
@@ -156,7 +159,8 @@ namespace EventsApp.Controllers
 
                 if (isValid)
                 {
-                    return Ok("You are authenticated");
+               
+                    return Ok(User.FindFirst(ClaimTypes.Name)?.Value);
                 }
             }
 
@@ -194,6 +198,10 @@ namespace EventsApp.Controllers
                 return false;
             }
         }
+
+
+
+
     }
 
 /*    // PUT: api/User/UpdateUser/{id}

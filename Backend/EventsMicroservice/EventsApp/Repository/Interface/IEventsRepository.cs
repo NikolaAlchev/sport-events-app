@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Model;
+using Microsoft.Extensions.Logging;
 
 namespace Repository.Interface
 {
@@ -12,5 +13,7 @@ namespace Repository.Interface
         public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating);
         public List<EventUser> getEventUsers(Guid eventId);
         public Event GetEventWithUsers(Guid eventId);
+
+        
     }
 }
