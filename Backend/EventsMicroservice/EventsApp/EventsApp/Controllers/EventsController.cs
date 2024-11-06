@@ -7,6 +7,7 @@ using Service.Interface;
 
 namespace EventsApp.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
@@ -88,6 +89,7 @@ namespace EventsApp.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize (Roles = "User")]
         public void RegisterForEvent([FromBody] UserToEventDTO userEvent) 
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
