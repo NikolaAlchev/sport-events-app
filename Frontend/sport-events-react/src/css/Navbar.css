@@ -66,6 +66,21 @@ nav .active{
     display: inline-block;
   }
 
+  #username-container{
+    margin-top: 30px;
+    margin-left: 20px;
+    font-weight: 600;
+    color: white;
+    font-size: 22px;
+    background-color: rgba(20, 20, 20, 0.3);
+    border-radius: 30px;
+    padding: 5px 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 43px;
+  }
+
   #login-button-container{
     margin-top: 30px;
     margin-right: 40px;

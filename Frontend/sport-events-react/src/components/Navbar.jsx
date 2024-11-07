@@ -1,19 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import '../css/Navbar.css';
 
 
 function Navbar() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [username, setUsername] = useState(null);
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        fetch('https://localhost:7023/api/User/validate', {
+            method: 'GET',
+            credentials: 'include',
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            throw new Error("Not authenticated");
+        })
+        .then(data => {
+            setUsername(data);
+            setLoggedIn(true);
+            console.log(loggedIn);
+        })
+        .catch(error => {
+            console.error("Error fetching username:", error);
+            setUsername(null);
+            setLoggedIn(false);
+        });
+    }, [location]);
+
 
     const handleLoginClick = () => {
         navigate('/user/login');
       };
 
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('https://localhost:7023/api/User/Logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                setUsername(null);
+                setLoggedIn(false);
+                navigate('/matches');
+            } else {
+                console.error("Logout failed");
+            }
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    };
+
     return (
         <nav>
             <div id="navbar-left-side">
-                <div class="button button-left" id="navbar-container">
+                <div className="button button-left" id="navbar-container">
                     <NavLink to="/events" className="navbar-links">
                         <p>Events</p>
                     </NavLink>
@@ -30,14 +76,22 @@ function Navbar() {
                         <p>Players</p>
                     </NavLink>
                 </div>
-                <div>
-                    Hello
-                </div>
+                {username ? 
+                    <div id="username-container">
+                        {username}
+                    </div> 
+                : ""}
+                
             </div>
 
 
             <div id="login-button-container">
-                <button class="navbar-button" onClick={handleLoginClick}>Login</button>
+                {loggedIn ? 
+                    <button className="navbar-button" onClick={handleLogout}>Logout</button> 
+                    : 
+                    <button className="navbar-button" onClick={handleLoginClick}>Login</button> 
+                }
+                
             </div>
         </nav>
     );
