@@ -199,6 +199,21 @@ namespace EventsApp.Controllers
             }
         }
 
+        // POST: api/User/Logout
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Append("jwt", "", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(-1),
+                SameSite = SameSiteMode.None
+            });
+
+            return Ok(new { message = "Logged out successfully" });
+        }
+
 
 
 
