@@ -9,15 +9,15 @@ function Matches() {
 
     useEffect(() => {
         let today = new Date();
-        let formattedToday = today.toISOString().split('T')[0]; 
-        let [year, month, day] = formattedToday.split('-'); 
+        let formattedToday = today.toISOString().split('T')[0];
+        let [year, month, day] = formattedToday.split('-');
         formattedToday = `${month}-${day}-${year}`;
         fetch(`http://localhost:5260/matches/all?fromDate=${formattedToday}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-               
+
                 return response.json();
             })
             .then((data) => {

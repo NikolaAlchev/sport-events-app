@@ -17,6 +17,8 @@ import SingleEvent from './pages/SingleEvent';
 import CreateUser from './pages/CreateUser';
 import LoginUser from "./pages/LoginUser"
 import Navbar from "./components/Navbar"
+import AddEventAdmin from './pages/AddEventAdmin';
+
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
         <Route path="/events/:id" element={<SingleEvent />} />
         <Route path="/user/register" element={<CreateUser />} />
         <Route path="/user/login" element={<LoginUser />} />
+        <Route path="/admin/event/add" element={<AddEventAdmin />} />
+
       </Routes>
     </Router>
   );

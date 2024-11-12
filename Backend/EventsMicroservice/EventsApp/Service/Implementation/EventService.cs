@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Domain.DTO;
 using Domain.Identity;
 using Domain.Model;
 using Repository.Implementation;
@@ -69,20 +70,20 @@ namespace Service.Implementation
             if (resDate < currentDate)
             {
              
-                throw new InvalidOperationException("Cannot reserve a seat. The event reservation has already ended.");
+                throw new ArgumentException("Cannot reserve a seat. The event has already ended.");
              
             }
             else if (resDate == currentDate)
             {
                 if (currentTime > timeClosedRes)
                 {
-                    throw new InvalidOperationException("Cannot reserve a seat. The event reservation has already ended.");
+                    throw new ArgumentException("Cannot reserve a seat. The event reservation has already ended.");
                 }
             }
             List<EventUser> eventUsers = sportsEvent.Users.ToList();
             if (eventUsers.Count() == sportsEvent.Capacity.Value)
             {
-                throw new Exception("No seats available, the event is booked");
+                throw new ApplicationException("No seats available, the event is booked");
 
             }
             if (!userIds.Contains(UserId))
@@ -91,13 +92,22 @@ namespace Service.Implementation
                     return eventUser;
 
             }
-            throw new Exception("Can't Reserve more then 1 seat");
+            throw new AccessViolationException("Can't Reserve more then 1 seat");
 
 
 
 
         }
 
+        public RegisteredDTO checkReservationForEvent(Guid eventId, string userId)
+        {
+            List<string> usersFromEvent = _eventUserRepository.getUsersFromEvent(eventId);
+            if (usersFromEvent.Contains(userId))
+            {
 
+                return new RegisteredDTO { IsRegistered = "true"};
+            }
+            return new RegisteredDTO { IsRegistered = "false" };
+        }
     }
 }

@@ -38,57 +38,86 @@ function SingleEvent() {
     // Load the event data when the component mounts
     useEffect(() => {
         fetchData();
-        checkAuthentication();
+        checkRegistered();
     }, []);
 
 
-    const checkAuthentication = () => {
-        // Check with backend if the user is authenticated
-        fetch('https://localhost:7023/api/user/validate', {
+    // const checkAuthentication = () => {
+    //     // Check with backend if the user is authenticated
+    //     fetch('https://localhost:7023/api/user/validate', {
+    //         method: 'GET',
+    //         credentials: 'include',  // This will send the HTTP-only cookie with the request
+    //     })
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 setIsAuthenticated(true);
+    //             } else {
+    //                 setIsAuthenticated(false);
+    //             }
+    //         })
+    //         .catch(() => setIsAuthenticated(false));
+    // };
+
+
+    const checkRegistered = () => {
+        // Check with backend if the user is registered for the event
+        fetch(`https://localhost:7023/api/Events/register/check?eventId=${id}`, {
             method: 'GET',
             credentials: 'include',  // This will send the HTTP-only cookie with the request
         })
             .then(response => {
                 if (response.ok) {
-                    setIsAuthenticated(true);
+
+                    return response.json()
                 } else {
-                    setIsAuthenticated(false);
+                    throw new Error("Failed to check registration status");
                 }
+            }).then(data => {
+
+                console.log("Registration status:", data.isRegistered);
+                setIsRegistered(data.isRegistered === "true");  // Set the registration status
             })
-            .catch(() => setIsAuthenticated(false));
+            .catch(error => {
+                console.error("Error fetching registration status:", error);
+                setIsRegistered(false);
+            });
     };
+
 
 
     // Handle the "I Am Going" button click
     const handleGoingClick = () => {
-        if (isAuthenticated) {
-            // If the user is authenticated, send a request to the backend
-            // urlto ne e implementirano!
-            fetch(`https://localhost:7023/api/Events/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',  // Send the token (http-only cookie) along with the request
-                body: JSON.stringify({ EventId: id }),
+
+        // If the user is authenticated, send a request to the backend
+        // urlto ne e implementirano!
+        fetch(`https://localhost:7023/api/Events/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',  // Send the token (http-only cookie) along with the request
+            body: JSON.stringify({ EventId: id }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Successfully registered for the event!');
+                    setIsRegistered(true);
+                } else if (response.status === 401) {
+                    // If forbidden, redirect to login
+                    navigate('/user/login');
+                } else if (response.status === 405) {
+                    alert("Cannot reserve a seat. The event has already ended.")
+                } else if (response.status === 406) {
+                    alert("Can't Reserve more then 1 seat");
+                } else if (response.status === 407) {
+                    alert("Can't reserve seat. The event is booked");
+                }
+
             })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Successfully registered for the event!');
-                    } else if (response.status === 403) {
-                        // If forbidden, redirect to login
-                        navigate('/user/login');
-                    } else {
-                        alert("Can't Reserve more then 1 seat");
-                    }
-                })
-                .catch(() => {
-                    alert('There was an error registering for the event.');
-                });
-        } else {
-            // If the user is not authenticated, redirect them to the login page
-            navigate('/user/login');
-        }
+            .catch(() => {
+                alert('There was an error registering for the event.');
+            });
+
     };
 
 
@@ -113,7 +142,6 @@ function SingleEvent() {
 
     const timeLeftToRes = (dateString, closeTime) => {
         const now = new Date(); // Get the current date and time
-
         // Check if closeTime is provided and append it to the dateString
         let targetDateTime;
         if (closeTime) {
@@ -223,7 +251,8 @@ function SingleEvent() {
                     <Button
                         variant={isRegistered ? "yes" : "no"}
                         onClick={handleGoingClick}
-                        disabled={isRegistered} // Optionally disable the button if already registered
+                        disabled={isRegistered}
+                        className={style.goingButton}
                     >
                         {isRegistered ? "Registered" : "I Am Going"}
                     </Button>

@@ -3,6 +3,7 @@ using Domain.DTO;
 using Domain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Service.Interface;
 
 namespace EventsApp.Controllers
@@ -90,7 +91,7 @@ namespace EventsApp.Controllers
 
         [HttpPost("register")]
         [Authorize (Roles = "User")]
-        public void RegisterForEvent([FromBody] UserToEventDTO userEvent) 
+        public IActionResult RegisterForEvent([FromBody] UserToEventDTO userEvent) 
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -98,8 +99,48 @@ namespace EventsApp.Controllers
                 throw new UnauthorizedAccessException("User ID could not be found.");
             }
 
-            _eventService.reserveSeatForUserOnEvent(userId, userEvent.EventId);
+
+            try
+            {
+                return Ok(_eventService.reserveSeatForUserOnEvent(userId, userEvent.EventId));
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(405, ex.Message);
+
+            }
+            catch (AccessViolationException ex)
+            {
+                return StatusCode(406, ex.Message);
+            }
+            catch (ApplicationException ex)
+            {
+                return StatusCode(407, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
 
         }
+
+
+        [HttpGet("register/check")]
+        [Authorize(Roles = "User")]
+        public RegisteredDTO CheckRegistration(Guid eventId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException("User ID could not be found.");
+            }
+
+            return _eventService.checkReservationForEvent(eventId, userId);
+
+
+
+        }
+
+
     }
 }
