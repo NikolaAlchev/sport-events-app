@@ -815,19 +815,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\nikol\\.nuget\\packages\\": {}
+    "C:\\Users\\vodil\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nikol\\Desktop\\sport-events-app\\Backend\\EventsMicroservice\\EventsApp\\Domain\\Domain.csproj",
+      "projectUniqueName": "C:\\Users\\vodil\\OneDrive\\Desktop\\project learning\\.net\\SportsApp\\Backend\\EventsMicroservice\\EventsApp\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "C:\\Users\\nikol\\Desktop\\sport-events-app\\Backend\\EventsMicroservice\\EventsApp\\Domain\\Domain.csproj",
-      "packagesPath": "C:\\Users\\nikol\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nikol\\Desktop\\sport-events-app\\Backend\\EventsMicroservice\\EventsApp\\Domain\\obj\\",
+      "projectPath": "C:\\Users\\vodil\\OneDrive\\Desktop\\project learning\\.net\\SportsApp\\Backend\\EventsMicroservice\\EventsApp\\Domain\\Domain.csproj",
+      "packagesPath": "C:\\Users\\vodil\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\vodil\\OneDrive\\Desktop\\project learning\\.net\\SportsApp\\Backend\\EventsMicroservice\\EventsApp\\Domain\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\nikol\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\vodil\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -879,7 +884,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

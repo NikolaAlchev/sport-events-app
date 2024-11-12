@@ -56,7 +56,7 @@ namespace EventsApp.Controllers
 
         // POST: api/Events/AddEvent
         [HttpPost("[action]")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<Event> AddEvent([FromBody] Event e)
         {
             var createdEvent = _eventService.AddEvent(e);
