@@ -167,6 +167,30 @@ namespace EventsApp.Controllers
             return Unauthorized("Not authenticated");
         }
 
+
+        [HttpGet("is-admin")]
+        public IActionResult isAdmin()
+        {
+            // Check if the cookie exists
+            if (Request.Cookies.TryGetValue("jwt", out string token))
+            {
+                // Validate the token (e.g., decode JWT, check expiration, etc.)
+                var isValid = ValidateToken(token);
+
+                if (isValid)
+                {
+                    return Ok(User.FindFirst(ClaimTypes.Role)?.Value == "Admin");
+       
+    
+                }
+            }
+
+            return Unauthorized("Not authenticated");
+        }
+
+
+
+
         private bool ValidateToken(string token)
         {
             if (string.IsNullOrEmpty(token))

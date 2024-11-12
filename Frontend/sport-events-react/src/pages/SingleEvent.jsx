@@ -9,7 +9,7 @@ function SingleEvent() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
     const [isRegistered, setIsRegistered] = useState(false);
     const navigate = useNavigate();  // Use for redirection
 

@@ -1,7 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const AddEventAdmin = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        checkAuthentication();
+    }, []);
+
+
+    const checkAuthentication = () => {
+        // Check with backend if the user is authenticated
+        fetch('https://localhost:7023/api/user/AddEvent', {
+            method: 'GET',
+            credentials: 'include',  // This will send the HTTP-only cookie with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log(response.body)
+                    if (!response.body) {
+                        navigate('/user/login');
+                    }
+                } else if (response.status === 401) {
+
+                    navigate('/user/login');
+                }
+            })
+            .catch(() => navigate('/user/login'));
+    };
+
+
+
+
     const [eventData, setEventData] = useState({
         Title: '',
         Country: '',
@@ -48,8 +79,34 @@ const AddEventAdmin = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Event Data:', eventData);
-        // Handle the form submission (e.g., send the data to an API)
+        console.log(e)
+        console.log(eventData)
+        fetch('https://localhost:7023/api/Events/AddEvent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(eventData),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+
+                    navigate('/user/login')
+                } else {
+                    console.log(response.body)
+                    throw new Error("could'nt add new event")
+                }
+            })
+            .then((data) => {
+                console.log('Event created successfully:', data);
+                navigate(`/events/${data.id}`); // Navigate to the event's detail page or show a success message
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     };
 
     const excelImportButtonClick = () => {
