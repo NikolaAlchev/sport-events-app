@@ -1,6 +1,4 @@
 #events-content{
-    position: absolute;
-    top: 0;
     width: 100%;
     height: 100%;
 }
@@ -17,5 +15,31 @@
 }
 
 #events-bottom-container{
-    margin-top: 70px;
+    margin-top: 60px;
+}
+
+#add-event-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+#add-event-container .line{
+    margin: 0;
+    padding: 0;
+    width: 30%;
+    height: 2px;
+    background-color: #538E3E;
+}
+
+#add-event-button{
+    color: white;
+    font-size: 25px;
+    background-color: #538E3E;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 10px;
+    margin: 0 30px;
 }
