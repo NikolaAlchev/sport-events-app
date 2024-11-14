@@ -18,7 +18,6 @@ const AddEventAdmin = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    console.log(response.body)
                     if (!response.body) {
                         navigate('/user/login');
                     }
@@ -69,18 +68,20 @@ const AddEventAdmin = () => {
         }
     };
 
+    function appendMillisecondsIfNeeded(time) {
+        return time && time.split(":").length === 2 ? time + ":00" : time;
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const updatedEventData = {
             ...eventData,
-            StartTime: eventData.StartTime + ":00",
-            EndTime: eventData.EndTime + ":00",
-            GateOpenTime: eventData.GateOpenTime + ":00",
-            ReservationCloseTime: eventData.ReservationCloseTime + ":00"
+            StartTime: appendMillisecondsIfNeeded(eventData.StartTime),
+            EndTime: appendMillisecondsIfNeeded(eventData.EndTime),
+            GateOpenTime: appendMillisecondsIfNeeded(eventData.GateOpenTime),
+            ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
         };
-
-        console.log(JSON.stringify(updatedEventData));
 
         fetch('https://localhost:7023/api/Events/AddEvent', {
             method: 'POST',
@@ -109,9 +110,44 @@ const AddEventAdmin = () => {
             });
     };
 
-    const excelImportButtonClick = () => {
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
 
-    }
+        try {
+            const response = await fetch('https://localhost:7023/api/Events/UploadExcel', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                setEventData({
+                    Title: data.title || '',
+                    Country: data.country || '',
+                    Address: data.address || '',
+                    Rating: data.rating || '',
+                    Capacity: data.capacity || '',
+                    Parking: data.parking || false,
+                    ImageUrl: data.imageUrl || '',
+                    Date: data.date || '',
+                    StartTime: data.startTime || '',
+                    EndTime: data.endTime || '',
+                    GateOpenTime: data.gateOpenTime || '',
+                    ReservationCloseTime: data.reservationCloseTime || '',
+                    Price: data.price || '',
+                    Label: data.label || '',
+                    Description: data.description || '',
+                });
+            } else {
+                console.error("Failed to upload file.");
+            }
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
+    };
+
 
     return (
         <div id="add-event-content">
@@ -126,77 +162,78 @@ const AddEventAdmin = () => {
                         <div className="left-side">
                             <div className="form-group">
                                 <label htmlFor="Title">Event Title</label>
-                                <input type="text" id="Title" name="Title" value={eventData.Title} onChange={handleChange} />
+                                <input type="text" id="Title" name="Title" value={eventData.Title} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Country">Country</label>
-                                <input type="text" id="Country" name="Country" value={eventData.Country} onChange={handleChange} />
+                                <input type="text" id="Country" name="Country" value={eventData.Country} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Address">Address</label>
-                                <input type="text" id="Address" name="Address" value={eventData.Address} onChange={handleChange} />
+                                <input type="text" id="Address" name="Address" value={eventData.Address} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Rating">Rating</label>
-                                <input type="number" id="Rating" name="Rating" value={eventData.Rating} onChange={handleChange} />
+                                <input type="number" id="Rating" name="Rating" value={eventData.Rating} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Capacity">Capacity</label>
-                                <input type="number" id="Capacity" name="Capacity" value={eventData.Capacity} onChange={handleChange} />
+                                <input type="number" id="Capacity" name="Capacity" value={eventData.Capacity} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Price">Price</label>
-                                <input type="number" id="Price" name="Price" value={eventData.Price} onChange={handleChange} />
+                                <input type="number" id="Price" name="Price" value={eventData.Price} onChange={handleChange} required/>
                             </div>
                             <div className="form-group parking-group">
                                 <label>Parking</label>
                                 <label>
-                                    <input type="radio" name="Parking" value="true" checked={eventData.Parking === true} onChange={handleChange} />
+                                    <input type="radio" name="Parking" value="true" checked={eventData.Parking === true} onChange={handleChange} required/>
                                     Yes
                                 </label>
                                 <label>
-                                    <input type="radio" name="Parking" value="false" checked={eventData.Parking === false} onChange={handleChange} />
+                                    <input type="radio" name="Parking" value="false" checked={eventData.Parking === false} onChange={handleChange} required/>
                                     No
                                 </label>
                             </div>
                             <div className="form-group">
                                 <label>Select Image</label>
-                                <input type="text" id="ImageUrl" name="ImageUrl" value={eventData.ImageUrl} onChange={handleChange} />
+                                <input type="text" id="ImageUrl" name="ImageUrl" value={eventData.ImageUrl} onChange={handleChange} required/>
                             </div>
                         </div>
 
                         <div className="right-side">
                             <div className="form-group">
                                 <label htmlFor="Date">Event Date</label>
-                                <input type="date" id="Date" name="Date" value={eventData.Date} onChange={handleChange} />
+                                <input type="date" id="Date" name="Date" value={eventData.Date} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="StartTime">Starts at</label>
-                                <input type="time" id="StartTime" name="StartTime" value={eventData.StartTime} onChange={handleChange} />
+                                <input type="time" id="StartTime" name="StartTime" value={eventData.StartTime} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="EndTime">Closes at</label>
-                                <input type="time" id="EndTime" name="EndTime" value={eventData.EndTime} onChange={handleChange} />
+                                <input type="time" id="EndTime" name="EndTime" value={eventData.EndTime} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="GateOpenTime">Gate open at</label>
-                                <input type="time" id="GateOpenTime" name="GateOpenTime" value={eventData.GateOpenTime} onChange={handleChange} />
+                                <input type="time" id="GateOpenTime" name="GateOpenTime" value={eventData.GateOpenTime} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="ReservationCloseTime">Reservation closes at</label>
-                                <input type="time" id="ReservationCloseTime" name="ReservationCloseTime" value={eventData.ReservationCloseTime} onChange={handleChange} />
+                                <input type="time" id="ReservationCloseTime" name="ReservationCloseTime" value={eventData.ReservationCloseTime} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Label">Label</label>
-                                <input type="text" id="Label" name="Label" value={eventData.Label} onChange={handleChange} />
+                                <input type="text" id="Label" name="Label" value={eventData.Label} onChange={handleChange} required/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="Description">Description</label>
-                                <textarea id="Description" name="Description" value={eventData.Description} onChange={handleChange} />
+                                <textarea id="Description" name="Description" value={eventData.Description} onChange={handleChange} required/>
                             </div>
                             <div className="button-group">
-                                <button type="button" onClick={excelImportButtonClick} className="excel-button">Import from Excel</button>
+                                <button type="button" className="excel-button" onClick={() => document.getElementById('file-upload').click()}>Import from Excel</button>
                                 <button type="submit" className="add-button">ADD</button>
+                                <input type="file" id="file-upload" style={{ display: 'none' }} accept=".xlsx, .xls" onChange={handleFileChange}/>
                             </div>
                         </div>
                     </form>

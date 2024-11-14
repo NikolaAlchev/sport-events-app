@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using ClosedXML.Excel;
 using Domain.DTO;
 using Domain.Identity;
 using Domain.Model;
+using Microsoft.AspNetCore.Http;
 using Repository.Implementation;
 using Repository.Interface;
 using Service.Interface;
@@ -94,9 +96,6 @@ namespace Service.Implementation
             }
             throw new AccessViolationException("Can't Reserve more then 1 seat");
 
-
-
-
         }
 
         public RegisteredDTO checkReservationForEvent(Guid eventId, string userId)
@@ -108,6 +107,65 @@ namespace Service.Implementation
                 return new RegisteredDTO { IsRegistered = "true"};
             }
             return new RegisteredDTO { IsRegistered = "false" };
+        }
+
+        public Event ParseEventFromExcel(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("No file uploaded.");
+            }
+
+            Event eventData;
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    var headerRow = worksheet.Row(1);
+
+                    var columnMapping = new Dictionary<string, int>();
+
+                    for (int col = 1; col <= headerRow.LastCellUsed().Address.ColumnNumber; col++)
+                    {
+                        var headerName = headerRow.Cell(col).GetString().Trim().ToLower();
+                        columnMapping[headerName] = col;
+                    }
+
+                    var dataRow = worksheet.Row(2);
+
+                    eventData = new Event
+                    {
+                        Title = GetCellValue(dataRow, columnMapping, "title"),
+                        Country = GetCellValue(dataRow, columnMapping, "country"),
+                        Address = GetCellValue(dataRow, columnMapping, "address"),
+                        Rating = float.TryParse(GetCellValue(dataRow, columnMapping, "rating"), out var rating) ? rating : (float?)null,
+                        Capacity = int.TryParse(GetCellValue(dataRow, columnMapping, "capacity"), out var capacity) ? capacity : (int?)null,
+                        Parking = bool.TryParse(GetCellValue(dataRow, columnMapping, "parking"), out var parking) && parking,
+                        ImageUrl = GetCellValue(dataRow, columnMapping, "imageurl"),
+                        Date = DateTime.TryParse(GetCellValue(dataRow, columnMapping, "date"), out var date) ? date : (DateTime?)null,
+                        StartTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "starttime"), out var startTime) ? startTime : (TimeOnly?)null,
+                        EndTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "endtime"), out var endTime) ? endTime : (TimeOnly?)null,
+                        GateOpenTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "gateopentime"), out var gateOpenTime) ? gateOpenTime : (TimeOnly?)null,
+                        ReservationCloseTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "reservationclosetime"), out var reservationCloseTime) ? reservationCloseTime : (TimeOnly?)null,
+                        Price = int.TryParse(GetCellValue(dataRow, columnMapping, "price"), out var price) ? price : (int?)null,
+                        Label = GetCellValue(dataRow, columnMapping, "label"),
+                        Description = GetCellValue(dataRow, columnMapping, "description")
+                    };
+                }
+            }
+
+            return eventData;
+        }
+
+        private string? GetCellValue(IXLRow row, Dictionary<string, int> columnMapping, string columnName)
+        {
+            if (columnMapping.TryGetValue(columnName.ToLower(), out var colIndex))
+            {
+                return row.Cell(colIndex).GetString();
+            }
+            return null;
         }
     }
 }

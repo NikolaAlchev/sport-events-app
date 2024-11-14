@@ -137,8 +137,25 @@ namespace EventsApp.Controllers
 
             return _eventService.checkReservationForEvent(eventId, userId);
 
+        }
 
 
+        [HttpPost("UploadExcel")]
+        public IActionResult UploadExcel(IFormFile file)
+        {
+            try
+            {
+                var eventData = _eventService.ParseEventFromExcel(file);
+                return Ok(eventData);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
 
 

@@ -23,7 +23,6 @@ function Navbar() {
         .then(data => {
             setUsername(data);
             setLoggedIn(true);
-            console.log(loggedIn);
         })
         .catch(error => {
             console.error("Error fetching username:", error);
