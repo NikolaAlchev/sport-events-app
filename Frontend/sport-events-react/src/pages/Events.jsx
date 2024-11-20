@@ -115,9 +115,7 @@ function Events() {
 
     return (
         <div id="events-content">
-            <div id="events-top-container">
-
-            </div>
+            <div id="events-top-container"></div>
             <div id="events-bottom-container">
                 {isAdmin ?
                     <div id="add-event-container">
@@ -146,23 +144,39 @@ function Events() {
                                 <div className={styles.filterOption}>
                                     <label>Price</label>
                                     <div>
-                                        <input type="radio" name="price" value="1" onClick={handlePriceFilter} checked={priceFilter === 1} /> From Lowest <br />
-                                        <input type="radio" name="price" value="2" onClick={handlePriceFilter} checked={priceFilter === 2} /> From Highest
+                                        <span className={styles.inputContainer}>
+                                            From Lowest <input type="radio" name="price" value="1" onClick={handlePriceFilter} checked={priceFilter === 1} />
+                                        </span>
+                                        <span className={styles.inputContainer}>
+                                            From Highest <input type="radio" name="price" value="2" onClick={handlePriceFilter} checked={priceFilter === 2} />
+                                        </span>
                                     </div>
                                 </div>
+                                <hr className={styles.horizontalLine}/>
                                 <div className={styles.filterOption}>
                                     <label>Popular Filters</label>
                                     <div>
-                                        <input type="radio" name="filter" value="1" onClick={handleParkingFilter} checked={parking === 1} /> Free Ticket <br />
-                                        <input type="radio" name="filter" value="2" onClick={handleParkingFilter} checked={parking === 2} /> Parking
+                                        <span className={styles.inputContainer}>
+                                            Free Ticket <input type="radio" name="filter" value="1" onClick={handleParkingFilter} checked={parking === 1} />
+                                        </span>
+                                        <span className={styles.inputContainer}>
+                                            Parking <input type="radio" name="filter" value="2" onClick={handleParkingFilter} checked={parking === 2} />
+                                        </span>
                                     </div>
                                 </div>
+                                <hr className={styles.horizontalLine}/>
                                 <div className={styles.filterOption}>
                                     <label>Star Ratings</label>
                                     <div>
-                                        <input type="radio" name="rating" value="5" onClick={handleRatingFilter} checked={starRating === 5} /> 5 Stars <br />
-                                        <input type="radio" name="rating" value="4" onClick={handleRatingFilter} checked={starRating === 4} /> 4 Stars <br />
-                                        <input type="radio" name="rating" value="3" onClick={handleRatingFilter} checked={starRating === 3} /> 3 Stars
+                                        <span className={styles.inputContainer}>
+                                            5 Stars <input type="radio" name="rating" value="5" onClick={handleRatingFilter} checked={starRating === 5} />
+                                        </span>
+                                        <span className={styles.inputContainer}>
+                                            4 Stars <input type="radio" name="rating" value="4" onClick={handleRatingFilter} checked={starRating === 4} />
+                                        </span>
+                                        <span className={styles.inputContainer}>
+                                            3 Stars<input type="radio" name="rating" value="3" onClick={handleRatingFilter} checked={starRating === 3} />
+                                        </span>
                                     </div>
                                 </div>
                             </div>
