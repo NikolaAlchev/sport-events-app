@@ -14,6 +14,7 @@ function Events() {
     const [date, setDate] = useState(getTodayDate());
     const [priceFilter, setPriceFilter] = useState(0);
     const [parking, setParking] = useState(0);
+    const [freeTicket, setFreeTicket] = useState(0);
     const [starRating, setStarRating] = useState(0);
     const [isAdmin, setIsAdmin] = useState(false);
     const limit = 6;
@@ -22,12 +23,12 @@ function Events() {
 
     function getTodayDate() {
         const today = new Date();
-        return today.toISOString().split('T')[0]; // This returns the date in 'YYYY-MM-DD' format
+        return today.toISOString().split('T')[0];
     }
 
-    const fetchData = (offset, price, parking, rating, country, date) => {
+    const fetchData = (offset, price, parking, rating, country, date, freeTicket) => {
         setLoading(true);
-        fetch(`https://localhost:7023/api/Events?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${price}&parking=${parking}&rating=${rating}`)
+        fetch(`https://localhost:7023/api/Events?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${price}&parking=${parking}&rating=${rating}&freeTicket=${freeTicket}`)
 
             .then((response) => {
                 if (!response.ok) {
@@ -46,8 +47,9 @@ function Events() {
     };
 
     useEffect(() => {
-        fetchData(offset, priceFilter, parking, starRating, country, date);
-    }, [offset, priceFilter, parking, starRating, date]);
+        fetchData(offset, priceFilter, parking, starRating, country, date, freeTicket);
+        // eslint-disable-next-line
+    }, [offset, priceFilter, parking, starRating, date, freeTicket]);
 
     useEffect(() => {
         fetch(`https://localhost:7023/api/User/is-admin`, {
@@ -79,9 +81,12 @@ function Events() {
         setPriceFilter(value === priceFilter ? 0 : value);
     }
 
-    const handleParkingFilter = (event) => {
-        const value = parseInt(event.target.value);
-        setParking(value === parking ? 0 : value);
+    const handleParkingFilter = () => {
+        setParking(parking ? 0 : 1);
+    }
+
+    const handleFreeTicketFilter = () => {
+        setFreeTicket(freeTicket ? 0 : 1);
     }
 
     const handleRatingFilter = (event) => {
@@ -91,14 +96,8 @@ function Events() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetchData(offset, priceFilter, parking, starRating, country, date)
+        fetchData(offset, priceFilter, parking, starRating, country, date, freeTicket)
     }
-
-
-    // const handleCountryFilter = (event) => {
-    //     const value = event.target.value;
-    //     setCountry(value);
-    // }
 
     const handleAddEventClick = () => {
         navigate('/admin/event/add');
@@ -126,7 +125,6 @@ function Events() {
                     : ""}
                 <Container className={styles.container}>
                     <Row>
-                        {/* Left Filter Section */}
                         <Col xs={12} sm={6} md={3} lg={3} xl={2} className={styles.filterDiv}>
                             <div>
                                 <h4>Filters</h4>
@@ -145,10 +143,10 @@ function Events() {
                                     <label>Price</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            From Lowest <input type="radio" name="price" value="1" onClick={handlePriceFilter} checked={priceFilter === 1} />
+                                            From Lowest <input type="radio" name="price" value="1" onClick={handlePriceFilter} defaultChecked={priceFilter === 1} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            From Highest <input type="radio" name="price" value="2" onClick={handlePriceFilter} checked={priceFilter === 2} />
+                                            From Highest <input type="radio" name="price" value="2" onClick={handlePriceFilter} defaultChecked={priceFilter === 2} />
                                         </span>
                                     </div>
                                 </div>
@@ -157,10 +155,10 @@ function Events() {
                                     <label>Popular Filters</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            Free Ticket <input type="radio" name="filter" value="1" onClick={handleParkingFilter} checked={parking === 1} />
+                                            Free Ticket <input type="radio" name="freeTicket" onClick={handleFreeTicketFilter} defaultChecked={freeTicket === 1} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            Parking <input type="radio" name="filter" value="2" onClick={handleParkingFilter} checked={parking === 2} />
+                                            Parking <input type="radio" name="parking" onClick={handleParkingFilter} defaultChecked={parking === 1} />
                                         </span>
                                     </div>
                                 </div>
@@ -169,20 +167,19 @@ function Events() {
                                     <label>Star Ratings</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            5 Stars <input type="radio" name="rating" value="5" onClick={handleRatingFilter} checked={starRating === 5} />
+                                            5 Stars <input type="radio" name="rating" value="5" onClick={handleRatingFilter} defaultChecked={starRating === 5} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            4 Stars <input type="radio" name="rating" value="4" onClick={handleRatingFilter} checked={starRating === 4} />
+                                            4 Stars <input type="radio" name="rating" value="4" onClick={handleRatingFilter} defaultChecked={starRating === 4} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            3 Stars<input type="radio" name="rating" value="3" onClick={handleRatingFilter} checked={starRating === 3} />
+                                            3 Stars<input type="radio" name="rating" value="3" onClick={handleRatingFilter} defaultChecked={starRating === 3} />
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </Col>
 
-                        {/* Right Card Section */}
                         <Col md={9} className={styles.cardGrid}>
                             <Row className="g-4">
                                 {data && data.length > 0 ? (
@@ -195,8 +192,6 @@ function Events() {
                                     <div>No events found</div>
                                 )}
                             </Row>
-
-                            {/* Pagination Controls */}
 
 
                         </Col>

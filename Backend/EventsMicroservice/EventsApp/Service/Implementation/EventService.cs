@@ -52,9 +52,9 @@ namespace Service.Implementation
             return _eventRepository.GetAllPaginated(offset,limit).ToList();
         }
 
-        public List<Event> GetAllPaginated(int offset, int limit, string date, string country, int price, int parking, int rating)
+        public List<Event> GetAllPaginated(int offset, int limit, string date, string country, int price, int parking, int rating, int freeTicket)
         {
-            return _eventsRepository.GetAllFiltered(offset, limit, date, country, price,parking, rating);
+            return _eventsRepository.GetAllFiltered(offset, limit, date, country, price, parking, rating, freeTicket);
         }
 
         public EventUser reserveSeatForUserOnEvent(string UserId, Guid EventId)
@@ -62,7 +62,7 @@ namespace Service.Implementation
             var sportsEvent = _eventsRepository.GetEventWithUsers(EventId);
             var userIds = _eventUserRepository.getUsersFromEvent(EventId);
 
-            DateTime resDate = sportsEvent.Date.Value.Date.AddDays(-1); // Adjust the event date to the day before
+            DateTime resDate = sportsEvent.Date.Value;
             TimeOnly timeClosedRes = sportsEvent.ReservationCloseTime.Value;
             DateTime now = DateTime.Now;
             DateTime currentDate = now.Date;
