@@ -31,14 +31,14 @@ namespace EventsApp.Controllers
         // GET: api/Events?offset=0&limit=6
 
         [HttpGet("")]
-        public ActionResult<List<Event>> GetAllEventsPaginated([FromQuery] int offset = 0, [FromQuery] int limit = 6, [FromQuery] string date = "", [FromQuery] string country = "", [FromQuery] int price = 0, [FromQuery] int parking = 0,[FromQuery] int rating = 0)
+        public ActionResult<List<Event>> GetAllEventsPaginated([FromQuery] int offset = 0, [FromQuery] int limit = 6, [FromQuery] string date = "", [FromQuery] string country = "", [FromQuery] int price = 0, [FromQuery] int parking = 0,[FromQuery] int rating = 0, [FromQuery] int freeTicket = 0)
         {
             // *optional -> Add total count of events to the responce so that we can have page numbrers in the frontend
             if (limit > 6)
             {
                 limit = 6;
             }
-            var events = _eventService.GetAllPaginated(offset, limit,date,country,price,parking,rating);
+            var events = _eventService.GetAllPaginated(offset, limit, date, country, price, parking, rating, freeTicket);
             return Ok(events);
         }
 
@@ -102,7 +102,8 @@ namespace EventsApp.Controllers
 
             try
             {
-                return Ok(_eventService.reserveSeatForUserOnEvent(userId, userEvent.EventId));
+                _eventService.reserveSeatForUserOnEvent(userId, userEvent.EventId);
+                return Ok();
             }
             catch (ArgumentException ex)
             {

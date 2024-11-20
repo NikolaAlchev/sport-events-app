@@ -10,7 +10,7 @@ namespace Repository.Interface
 {
     public interface IEventsRepository
     {
-        public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating);
+        public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating, int freeTicket);
         public List<EventUser> getEventUsers(Guid eventId);
         public Event GetEventWithUsers(Guid eventId);
 
