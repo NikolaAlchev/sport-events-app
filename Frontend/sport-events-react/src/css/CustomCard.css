@@ -1,0 +1,34 @@
+.event-card {
+    width: 17rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    box-shadow: none;
+}
+
+.event-title{
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.event-image {
+    border-radius: 10px;
+    height: 12rem;
+    object-fit: cover;
+}
+
+.event-address {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-rating {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.event-price {
+    font-size: 1.4rem;
+    color: #000;
+}

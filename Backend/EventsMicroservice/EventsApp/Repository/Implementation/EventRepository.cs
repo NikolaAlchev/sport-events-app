@@ -9,7 +9,7 @@ using Repository.Interface;
 
 namespace Repository.Implementation
 {
-    public class EventRepository:IEventsRepository
+    public class EventRepository : IEventsRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,22 +19,23 @@ namespace Repository.Implementation
         }
 
 
-        public Event GetEventWithUsers(Guid eventId) {
+        public Event GetEventWithUsers(Guid eventId)
+        {
 
             return _context.Events
                 .Where(i => i.Id.Equals(eventId)).FirstOrDefault();
-        
-        }   
+
+        }
 
 
-        public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating)
+        public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating, int freeTicket)
         {
             //fix price filter 
             var query = _context.Events.AsQueryable();
 
             if (!string.IsNullOrEmpty(date))
             {
-               
+
                 DateTime eventDate;
                 if (DateTime.TryParse(date, out eventDate))
                 {
@@ -44,7 +45,7 @@ namespace Repository.Implementation
 
             if (!string.IsNullOrEmpty(country))
             {
-                query = query.Where(e => e.Country.ToLower().Contains(country.ToLower()) );
+                query = query.Where(e => e.Country.ToLower().Contains(country.ToLower()));
             }
 
             if (price > 0)
@@ -59,17 +60,15 @@ namespace Repository.Implementation
                 }
             }
 
-            if (parking > 0)
+            if (parking == 1)
             {
-                if (parking == 1)
-                {
-                    query = query.Where(e => e.Parking == true);
-                }
-                else
-                {
-                    query = query.Where(e => e.Parking == false);
-                }
-               
+                query = query.Where(e => e.Parking == true);
+            }
+
+
+            if (freeTicket == 1)
+            {
+                query = query.Where(e => e.Price == 0);
             }
 
             if (rating > 0)
@@ -84,12 +83,12 @@ namespace Repository.Implementation
         {
             try
             {
-                
+
                 var eventEntity = _context.Events
                     .Where(i => i.Id.Equals(eventId))
                     .FirstOrDefault()?.Users?.ToList();
 
-               if (eventEntity == null)
+                if (eventEntity == null)
                 {
                     throw new Exception($"Event with ID {eventId} not found.");
                 }
@@ -97,7 +96,7 @@ namespace Repository.Implementation
 
                 if (eventEntity.Count.Equals(0))
                 {
-                    return new List<EventUser> ();
+                    return new List<EventUser>();
                 }
                 return eventEntity;
             }

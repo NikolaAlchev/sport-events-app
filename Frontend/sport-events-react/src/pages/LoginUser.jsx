@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import style from "../css/Login.module.css"
 
 
 function LoginUser() {
@@ -13,9 +13,6 @@ function LoginUser() {
         Password: ''
     });
 
-
-
-    // Handle form input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -29,18 +26,14 @@ function LoginUser() {
         setMessage('');
         setError('');
 
-
-
         try {
             const response = await fetch('https://localhost:7023/api/User/Login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-
                 },
                 body: JSON.stringify(formData),
                 credentials: 'include',
-                // Ensure cookies are included in the request
             });
 
             if (response.ok) {
@@ -56,45 +49,43 @@ function LoginUser() {
         }
     };
 
-
-
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc' }}>
-            <h2>Log in</h2>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className={style.outerContainer}>
+            <div className={style.loginContainer}>
+                <h2 style={{ textAlign: "center" }}>Login</h2>
+                <hr style={{ margin: "25px 20%" }} />
 
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '10px' }}>
-                    <label>
-                        Email:
+                {message && <p style={{ color: 'green', textAlign: 'center' }}>{message}</p>}
+                {error && <p style={{ color: 'red', textAlign: 'center'  }}>{error}</p>}
+
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '10px' }}>
                         <input
                             type="email"
                             name="Email"
+                            placeholder='Email'
                             value={formData.Email}
                             onChange={handleChange}
                             required
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                            className={style.inputField}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: '10px' }}>
-                    <label>
-                        Password:
+                    <div style={{ marginBottom: '10px' }}>
                         <input
                             type="password"
                             name="Password"
+                            placeholder='Password'
                             value={formData.Password}
                             onChange={handleChange}
                             required
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                            className={style.inputField}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <button type="submit" style={{ padding: '10px 15px', cursor: 'pointer' }}>Log in</button>
-            </form>
+                    <button type="submit" className={style.loginButton}>LOGIN</button>
+                </form>
+            </div>
         </div>
     );
 }

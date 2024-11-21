@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Button, Row, Col, Container } from 'react-bootstrap';
 import style from "../css/SingleEvent.module.css"
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faLocationDot, faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faStar } from '@fortawesome/free-regular-svg-icons'
 
 function SingleEvent() {
     const { id } = useParams();
@@ -11,7 +14,7 @@ function SingleEvent() {
     const [error, setError] = useState(null);
 
     const [isRegistered, setIsRegistered] = useState(false);
-    const navigate = useNavigate();  // Use for redirection
+    const navigate = useNavigate();
 
 
     const fetchData = () => {
@@ -35,7 +38,6 @@ function SingleEvent() {
             });
     };
 
-    // Load the event data when the component mounts
     useEffect(() => {
         fetchData();
         checkRegistered();
@@ -60,10 +62,9 @@ function SingleEvent() {
 
 
     const checkRegistered = () => {
-        // Check with backend if the user is registered for the event
         fetch(`https://localhost:7023/api/Events/register/check?eventId=${id}`, {
             method: 'GET',
-            credentials: 'include',  // This will send the HTTP-only cookie with the request
+            credentials: 'include',
         })
             .then(response => {
                 if (response.ok) {
@@ -75,7 +76,7 @@ function SingleEvent() {
             }).then(data => {
 
                 console.log("Registration status:", data.isRegistered);
-                setIsRegistered(data.isRegistered === "true");  // Set the registration status
+                setIsRegistered(data.isRegistered === "true");
             })
             .catch(error => {
                 console.error("Error fetching registration status:", error);
@@ -85,17 +86,14 @@ function SingleEvent() {
 
 
 
-    // Handle the "I Am Going" button click
     const handleGoingClick = () => {
 
-        // If the user is authenticated, send a request to the backend
-        // urlto ne e implementirano!
         fetch(`https://localhost:7023/api/Events/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: 'include',  // Send the token (http-only cookie) along with the request
+            credentials: 'include',
             body: JSON.stringify({ EventId: id }),
         })
             .then(response => {
@@ -103,7 +101,6 @@ function SingleEvent() {
                     alert('Successfully registered for the event!');
                     setIsRegistered(true);
                 } else if (response.status === 401) {
-                    // If forbidden, redirect to login
                     navigate('/user/login');
                 } else if (response.status === 405) {
                     alert("Cannot reserve a seat. The event has already ended.")
@@ -112,7 +109,6 @@ function SingleEvent() {
                 } else if (response.status === 407) {
                     alert("Can't reserve seat. The event is booked");
                 }
-
             })
             .catch(() => {
                 alert('There was an error registering for the event.');
@@ -120,10 +116,6 @@ function SingleEvent() {
 
     };
 
-
-
-
-    // Helper function to format the date
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', hours: 'numeric', minutes: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
@@ -132,33 +124,27 @@ function SingleEvent() {
     const resTo = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
-        // Create a new Date object and subtract 1 day
         let date = new Date(dateString);
-        date.setDate(date.getDate() - 1); // Set to the previous day
+        date.setDate(date.getDate() - 1);
 
-        // Return the formatted date
         return date.toLocaleDateString(undefined, options);
     }
 
     const timeLeftToRes = (dateString, closeTime) => {
-        const now = new Date(); // Get the current date and time
-        // Check if closeTime is provided and append it to the dateString
+        const now = new Date();
         let targetDateTime;
         if (closeTime) {
-            targetDateTime = new Date(`${dateString.split('T')[0]}T${closeTime}`); // Use only the date part of dateString and append time
+            targetDateTime = new Date(`${dateString.split('T')[0]}T${closeTime}`);
         } else {
-            targetDateTime = new Date(dateString); // If dateString already has time, use it directly
+            targetDateTime = new Date(dateString);
         }
 
-        // Calculate the difference in milliseconds
         const timeDifference = targetDateTime - now;
 
-        // Check if the target date is in the past
         if (timeDifference <= 0) {
             return "The target date has already passed.";
         }
 
-        // Calculate time left in terms of days, hours, and minutes
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -167,7 +153,6 @@ function SingleEvent() {
     };
 
 
-    // Loading and error handling
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -176,88 +161,105 @@ function SingleEvent() {
         return <div>Error: {error.message}</div>;
     }
 
-    // Render the event details
     return (
-        <div >
-            <Container style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-                <h1 style={{ textAlign: 'center' }}>{data.title}</h1>
-                <Row className="mt-5">
-                    <Col>
+        <div className={style.singleEventContent}>
+            <div className={style.singleEventTopContainer} style={{ backgroundImage: `url(${data.imageUrl})` }}></div>
+            <div className={style.singleEventBottomContainer}>
+                <Container style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+                    <h1 style={{ textAlign: 'center' }}>{data.title}</h1>
+                    <Row className="mt-5" style={{ columnGap: "60px" }}>
+                        <Col>
 
-                        <h2>{data.location}</h2>
-                        <h3>
-                            {data.country}
-                        </h3>
-                        <br></br>
-                        <p>
-                            <strong>Address:</strong> {data.address}
-                        </p>
-                        <p>
-                            <strong>Rating:</strong> ⭐ {data.rating}
-                        </p>
-                        <p>
-                            <strong>Date:</strong> {formatDate(data.date)}
-                        </p>
-                        <p>
-                            <strong>Event starts at:</strong> {data.startTime}h
-                        </p>
-                        <p>
-                            <strong>Event closes at:</strong> {data.endTime}h
-                        </p>
-                        <p>
-                            <strong>Gates open at:</strong> {data.gateOpenTime}h
-                        </p>
-                        <p>
-                            <strong>Number of signed-up people:</strong> {data.signedUpPeople}
-                        </p>
-                        <p>
-                            <strong>Capacity:</strong> {data.capacity} - Reservations left for: {data.capacity - data.signedUpPeople} people
-                        </p>
-                        <p>
-                            {data.parking ? (
-                                <span style={{ color: 'green' }}>Parking is available</span>
-                            ) : (
-                                <span style={{ color: 'red' }}>No parking available</span>
-                            )}
-                        </p>
-                        <p>
-                            <strong>${data.price}</strong>  / Person
-                        </p>
-                    </Col>
-                    <Col>
-                        <div className={style.descriptionDiv}>
-                            <h4>Description:</h4>
-                            <hr></hr>
-                            <p>{data.description}</p>
-                        </div>
+                            <h2>{data.location}</h2>
+                            <p style={{ fontSize: "1.8rem" }}>
+                                {data.country}
+                            </p>
+                            <p style={{ fontSize: "1.4rem" }}>
+                                <FontAwesomeIcon icon={faLocationDot} /> {data.address}
+                            </p>
+                            <p style={{ fontSize: "1.4rem" }}>
+                                <FontAwesomeIcon icon={faStar} /> {data.rating}
+                            </p>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                <p style={{ fontSize: "1.1rem" }}>Date:</p>
+                                <p style={{ fontSize: "1.2rem" }}>{formatDate(data.date)}</p>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                <p style={{ fontSize: "1.1rem" }}>Event starts at:</p>
+                                <p style={{ fontSize: "1.2rem" }}>{data.startTime}h</p>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                <p style={{ fontSize: "1.1rem" }}>Event closes at:</p>
+                                <p style={{ fontSize: "1.2rem" }}>{data.endTime}h</p>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                <p style={{ fontSize: "1.1rem" }}>Gates open at:</p>
+                                <p style={{ fontSize: "1.2rem" }}>{data.gateOpenTime}h</p>
+                            </div>
+                            <p style={{ fontSize: "1.1rem" }}>Number of signed-up people:</p>
+                            <p style={{ fontSize: "1.2rem" }}>{data.signedUpPeople}</p>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly", alignContent: "start" }}>
+                                    <p style={{ fontSize: "1.1rem" }}>Capacity:</p>
+                                    <p style={{ fontSize: "1.2rem" }}>{data.capacity}</p>
+                                </div>
 
-                        <div style={{ marginTop: '20px' }}>
-                            <p>
-                                <strong>Reservation closes at:</strong> {data.reservationCloseTime}-  {resTo(data.date)}
+                                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly", alignContent: "start" }}>
+                                    <p style={{ fontSize: "1.1rem" }}>Reservations left for:</p>
+                                    <p style={{ fontSize: "1.2rem" }}>{data.capacity - data.signedUpPeople} people</p>
+                                </div>
+                            </div>
+
+                            <p style={{ fontSize: "1.1rem" }}>
+                                {data.parking ? (
+                                    <span style={{ color: 'green' }}>Parking is available</span>
+                                ) : (
+                                    <span style={{ color: 'red' }}>No parking available</span>
+                                )}
                             </p>
                             <p>
-                                <strong>Time left to reserve:</strong> {timeLeftToRes(data.date, data.reservationCloseTime)}
+                                <strong style={{ fontSize: "1.2rem" }}>${data.price}</strong><span style={{ fontSize: "1.1rem", color: "#505050" }}> / Person</span>
                             </p>
-                        </div>
+                        </Col>
+                        <Col>
+                            <div className={style.descriptionDiv}>
+                                <p style={{ fontSize: "1.2rem" }}>Description:</p>
+                                <hr style={{ width: "60%" }}></hr>
+                                <p>{data.description}</p>
+                            </div>
 
+                            <div style={{ marginTop: '20px' }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                    <p>Reservation closes at</p> <p>{data.reservationCloseTime} - {resTo(data.date)}</p>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignContent: "center" }}>
+                                    <p>Time left to reserve:</p> <p>{timeLeftToRes(data.date, data.reservationCloseTime)}</p>
 
+                                </div>
 
-                        <div style={{ marginTop: '20px', fontSize: '12px', color: 'gray' }}>
-                            <p>Event Published: {formatDate(data.publishedDate)} at {data.publishedTime}</p>
-                        </div>
-                    </Col>
-                </Row>
-                <div style={{ marginTop: '20px', textAlign: 'center' }} >
-                    <Button
-                        variant={isRegistered ? "yes" : "no"}
-                        onClick={handleGoingClick}
-                        disabled={isRegistered}
-                        className={style.goingButton}
-                    >
-                        {isRegistered ? "Registered" : "I Am Going"}
-                    </Button>
+                            </div>
+
+                            <div style={{ marginTop: '20px', fontSize: '12px', color: 'gray' }}>
+                                <p>Event Published: {formatDate(data.publishedDate)} at {data.publishedTime}</p>
+                            </div>
+                        </Col>
+                    </Row>
+                    <div style={{ marginTop: '20px', textAlign: 'center' }} >
+                        <Button
+                            variant={isRegistered ? "yes" : "no"}
+                            onClick={handleGoingClick}
+                            disabled={isRegistered}
+                            style={{ backgroundColor: "#3D3D3D", color: "white", padding: "5px 25px" }}
+                        >
+                            {isRegistered ? "Registered" : "I Am Going"}
+                        </Button>
+                    </div>
+                </Container>
+                <div className={style.backButton} onClick={() => navigate('/events')}>
+                    <FontAwesomeIcon icon={faCircleChevronLeft} />
                 </div>
-            </Container>
+
+            </div>
 
         </div>
     );
