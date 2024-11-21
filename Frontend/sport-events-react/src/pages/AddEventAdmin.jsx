@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import "../css/AddEventAdmin.css";
+import ImageBanner from "../components/ImageBanner";
 
 const AddEventAdmin = () => {
     const navigate = useNavigate();
+    const imageUrl = "https://c4.wallpaperflare.com/wallpaper/971/967/737/sports-images-for-desktop-background-wallpaper-preview.jpg";
 
     useEffect(() => {
         checkAuthentication();
@@ -151,11 +153,7 @@ const AddEventAdmin = () => {
 
     return (
         <div id="add-event-content">
-            <div id="add-event-top-container">
-                <div>
-                    Add Event
-                </div>
-            </div>
+            <ImageBanner image={imageUrl} title={"Add Event"}></ImageBanner>
             <div id="add-event-bottom-container">
                 <Container>
                     <form onSubmit={handleSubmit} className="form-container">

@@ -1,4 +1,4 @@
-#footer-container{
+#footer-container {
     background-color: #3D3D3D;
     height: 60px;
     width: 100%;
@@ -7,7 +7,8 @@
     align-items: center;
     margin-top: 60px;
 }
-#footer-container p{
+
+#footer-container p {
     color: white;
     font-size: 16px;
     margin: 0;

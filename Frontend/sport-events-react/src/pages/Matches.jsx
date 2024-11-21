@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
 import styles from "../css/Matches.module.css";
-import { useNavigate } from 'react-router-dom';
-
-//http://localhost:3000/matches
+import League from "../components/League";
+import DateSelector from "../components/DateSelector";
+import ImageBanner from "../components/ImageBanner";
+import Loader from "../components/Loader";
 
 function Matches() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(getTodayDate());
+    const imageUrl = "https://s3-alpha-sig.figma.com/img/538e/043c/26152d8ff671e48e2db70ae0ecbf5b6c?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=RzS8YbPX14vehZFb~AOWUsXtbbfPa28OgdTjW9HkrxDx4GHtmPztwVYZnfao0dMp1H2Z1R~O67Uwp4x~FpZbWcaKKOJdZaDOXmc7phvSH7UIyKUgc0CEFBO~9KEIkQuMiiboUt9adIzo2B5LKMBpCCbMHDzytTyUXqkcQlQCqc-EN~iJLKe1ZvRaUmzWfeoNtAen94PwZK-ZtJa8wuWevNCXN~wv-eExN~-kZ9vrK-MFcshXWyohpTKI8RNaP8grBbWRNADMl9DWvakiDCGw4ATFDhoJqRGoiCiAW8RhFTEzpMB12X66g7YMrFQpx7GAHuDXft2Yd2Lbh5PV314Vvw__";
 
     function getTodayDate() {
         const today = new Date();
         today.setDate(23);
         today.setHours(0, 0, 0, 0);
-        return today.toISOString().split('T')[0]; // This returns the date in 'YYYY-MM-DD' format
+        return today.toISOString().split('T')[0];
     }
 
     useEffect(() => {
-        let formattedToday = selectedDate.split('T')[0]; 
-        let [year, month, day] = formattedToday.split('-'); 
+        let formattedToday = selectedDate.split('T')[0];
+        let [year, month, day] = formattedToday.split('-');
         formattedToday = `${month}-${day}-${year}`;
         fetch(`http://localhost:5260/matches/all?fromDate=${formattedToday}`)
             .then((response) => {
@@ -37,17 +39,16 @@ function Matches() {
                 setError(error);
                 setLoading(false);
             });
-    }, [selectedDate]); 
+    }, [selectedDate]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
     }
 
     if (error) {
         return <div>Error: {error.message}</div>;
     }
 
-    // Group matches by competition (league)
     const leagues = data.reduce((acc, match) => {
         const { competitionName } = match;
         if (!acc[competitionName]) {
@@ -58,79 +59,23 @@ function Matches() {
     }, {});
 
     return (
-        <div className={styles.MatchMainContainer}>
-            <div className={styles.Container}>
-                <DateSelector date={selectedDate}  dateFunc={setSelectedDate}/>
-                <div className="league-list">
-                    {Object.entries(leagues).map(([leagueName, matches]) => (
-                        <League key={leagueName} name={leagueName} matches={matches} />
-                    ))}
+        <div>
+            <ImageBanner image={imageUrl} title={"Select a match"}></ImageBanner>
+            <div className={styles.MatchMainContainer}>
+
+                <div className={styles.Container}>
+                    <DateSelector date={selectedDate} dateFunc={setSelectedDate} />
+                    <div className="league-list">
+                        {Object.entries(leagues).map(([leagueName, matches]) => (
+                            <League key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
+
     );
 
 };
-
-function DateSelector({ date }) {
-    // const handleDateChange = (event) => {
-    //     dateFunc(event.target.value);
-    // };
-
-    return (
-        <div className={styles.CalendarContainer}>
-            <div className={styles.CalendarInnerContainer}>
-                <p className={styles.CalendarText}>select a date</p>
-                {/* treba da se sredi kalendarot */}
-                {/* <input type="date" value={date} onChange={handleDateChange}/> */}
-                <input type="date" value={date}/>
-                <button className="calendar-button">📅</button>
-                <span className="date">{date}</span>
-                <hr />
-            </div>
-        </div>
-    );
-}
-
-function League({ name, matches }) {
-    return (
-        <div className={styles.LeagueContainer}>
-            <div className={styles.LeagueInnerContainer}>
-                <img className={styles.LeaguePhoto} src="" alt="" />
-                <h3>{name}</h3>
-            </div>
-            <div className={styles.MatchesContainer}>
-                {matches.map((match) => (
-                    <MatchRow 
-                        key={match.id} 
-                        matchId={match.id}
-                        homeTeam={match.homeTeamName} 
-                        awayTeam={match.awayTeamName} 
-                        score={`${match.homeTeamScore} : ${match.awayTeamScore}`}
-                        homeCrest={match.homeTeamCrest}
-                    awayCrest={match.awayTeamCrest}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function MatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId }) {
-    const navigate = useNavigate();  // Use for redirection
-    const goTo = () => {
-        navigate(`/matches/${matchId}`);
-    };
-    return (
-        <div className={styles.MatchRow} onClick={goTo}>
-            {/* <div className={styles.MatchRow}> */}
-            <img src={homeCrest} alt={`${homeTeam} crest`} className={styles.TeamPhoto} />
-            <div className={styles.TeamName}>{homeTeam}</div>
-            <div>{score}</div>
-            <div className={styles.TeamName}>{awayTeam}</div>
-            <img src={awayCrest} alt={`${awayTeam} crest`} className={styles.TeamPhoto} />
-        </div>
-    );
-}
 
 export default Matches;

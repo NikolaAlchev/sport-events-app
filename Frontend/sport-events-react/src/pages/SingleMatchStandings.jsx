@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
+import Loader from "../components/Loader";
 
 //http://localhost:3000/matches/502427/standings?homeTeam=4&awayTeam=20
 
@@ -14,8 +15,6 @@ function SingleMatchStandings() {
         const homeTeamId = searchParams.get("homeTeam")
         const awayTeamId = searchParams.get("awayTeam")
 
-
-        // Make GET request
         fetch(`http://localhost:5260/matches/team/standings?homeTeam=${homeTeamId}&awayTeam=${awayTeamId}`)
             .then((response) => {
                 if (!response.ok) {
@@ -31,10 +30,10 @@ function SingleMatchStandings() {
                 setError(error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array to ensure it runs once after the component mounts
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader/>;
     }
 
     if (error) {

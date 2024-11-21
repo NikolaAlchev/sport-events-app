@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
 import styles from "../css/Competitions.module.css";
 import { NavLink } from 'react-router-dom';
-
-//http://localhost:3000/competitions
+import ImageBanner from "../components/ImageBanner";
+import Loader from "../components/Loader";
 
 function Competitions() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const imageUrl = "https://s3-alpha-sig.figma.com/img/538e/043c/26152d8ff671e48e2db70ae0ecbf5b6c?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=RzS8YbPX14vehZFb~AOWUsXtbbfPa28OgdTjW9HkrxDx4GHtmPztwVYZnfao0dMp1H2Z1R~O67Uwp4x~FpZbWcaKKOJdZaDOXmc7phvSH7UIyKUgc0CEFBO~9KEIkQuMiiboUt9adIzo2B5LKMBpCCbMHDzytTyUXqkcQlQCqc-EN~iJLKe1ZvRaUmzWfeoNtAen94PwZK-ZtJa8wuWevNCXN~wv-eExN~-kZ9vrK-MFcshXWyohpTKI8RNaP8grBbWRNADMl9DWvakiDCGw4ATFDhoJqRGoiCiAW8RhFTEzpMB12X66g7YMrFQpx7GAHuDXft2Yd2Lbh5PV314Vvw__";
 
     useEffect(() => {
-
-        // Make GET request
         fetch(`http://localhost:5260/competitions/all`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                // console.log(response.json())
                 return response.json();
             })
             .then((data) => {
@@ -28,10 +26,10 @@ function Competitions() {
                 setError(error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array to ensure it runs once after the component mounts
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader/>;
     }
 
     if (error) {
@@ -39,20 +37,24 @@ function Competitions() {
     }
 
     return (
-        <div className={styles.MainContainer}>
-            <div className={styles.grid_container}>
-                {data && data.map((competition, index) => (
-                    <NavLink to={`/competitions/${competition.id}`} key={competition.id}>
-                        <img 
-                            key={index} 
-                            src={competition.emblem} 
-                            alt={competition.name} 
-                            className={`${styles.grid_item} ${styles.competitionImage}`} 
-                        />
-                    </NavLink>
-                ))}
+        <div>
+            <ImageBanner image={imageUrl} title={"Select a league"}></ImageBanner>
+            <div className={styles.MainContainer}>
+                <div className={styles.grid_container}>
+                    {data && data.map((competition, index) => (
+                        <NavLink to={`/competitions/${competition.id}`} key={competition.id}>
+                            <img
+                                key={index}
+                                src={competition.emblem}
+                                alt={competition.name}
+                                className={`${styles.grid_item} ${styles.competitionImage}`}
+                            />
+                        </NavLink>
+                    ))}
+                </div>
             </div>
         </div>
+
     );
 };
 

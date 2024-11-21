@@ -1,0 +1,18 @@
+.ImageBannerContainer {
+    background-color: white;
+    margin: 11px;
+    border-radius: 10px;
+    height: 60vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.ImageBannerTitle {
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+}

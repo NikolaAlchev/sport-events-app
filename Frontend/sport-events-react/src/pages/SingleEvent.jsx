@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import { Button, Row, Col, Container } from 'react-bootstrap';
-import style from "../css/SingleEvent.module.css"
+import style from "../css/SingleEvent.module.css";
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationDot, faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons'
-import { faStar } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationDot, faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faStar } from '@fortawesome/free-regular-svg-icons';
+import ImageBanner from "../components/ImageBanner";
+import Loader from "../components/Loader";
 
 function SingleEvent() {
     const { id } = useParams();
@@ -154,7 +156,7 @@ function SingleEvent() {
 
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader/>;
     }
 
     if (error) {
@@ -163,7 +165,7 @@ function SingleEvent() {
 
     return (
         <div className={style.singleEventContent}>
-            <div className={style.singleEventTopContainer} style={{ backgroundImage: `url(${data.imageUrl})` }}></div>
+            <ImageBanner image={data.imageUrl} title={data.title}></ImageBanner>
             <div className={style.singleEventBottomContainer}>
                 <Container style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
                     <h1 style={{ textAlign: 'center' }}>{data.title}</h1>

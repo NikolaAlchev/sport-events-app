@@ -62,6 +62,7 @@ namespace Repository.Implementation
                                             ? venue.ToString() : null;
                         DTO.HomeTeamCrest = singleMatch.GetProperty("homeTeam").GetProperty("crest").ToString();
                         DTO.AwayTeamCrest = singleMatch.GetProperty("awayTeam").GetProperty("crest").ToString();
+                        DTO.LeagueEmblem = singleMatch.GetProperty("competition").GetProperty("emblem").ToString();
                         matches.Add(DTO);
                     }
 

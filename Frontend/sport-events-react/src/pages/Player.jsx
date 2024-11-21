@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
+import Loader from "../components/Loader";
 
 // http://localhost:3000/player/1077
 
@@ -10,14 +11,11 @@ function Player() {
     const { id } = useParams();
 
     useEffect(() => {
-
-        // Make GET request
         fetch(`http://localhost:5260/player/${id}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                // console.log(response.json())
                 return response.json();
             })
             .then((data) => {
@@ -28,10 +26,10 @@ function Player() {
                 setError(error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array to ensure it runs once after the component mounts
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
     }
 
     if (error) {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
+import Loader from "../components/Loader";
 
 // http://localhost:3000/team/2013?name=Fluminense%20FC
 
@@ -16,13 +17,12 @@ function Team() {
         console.log(teamName)
         console.log(encodedTeamName)
         console.log(`http://localhost:5260/team/${id}?name=${encodedTeamName}`)
-        // Make GET request
+
         fetch(`http://localhost:5260/team/${id}?name=${encodedTeamName}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                // console.log(response.json())
                 return response.json();
             })
             .then((data) => {
@@ -33,10 +33,10 @@ function Team() {
                 setError(error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array to ensure it runs once after the component mounts
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader/>;
     }
 
     if (error) {

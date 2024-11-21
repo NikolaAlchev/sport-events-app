@@ -42,7 +42,7 @@
     flex-basis: 75%;
 }
 
-.inputContainer{
+.inputContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -51,7 +51,7 @@
     font-size: 1rem;
 }
 
-.horizontalLine{
+.horizontalLine {
     margin: 0 7%;
 }
 
