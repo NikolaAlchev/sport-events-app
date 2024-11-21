@@ -67,7 +67,7 @@ function Navbar() {
                         <p>Matches</p>
                     </NavLink>
 
-                    <NavLink to="/team" className="navbar-links">
+                    <NavLink to="/competitions" className="navbar-links">
                         <p>Teams</p>
                     </NavLink>
 

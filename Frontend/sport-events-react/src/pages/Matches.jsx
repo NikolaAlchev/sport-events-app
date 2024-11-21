@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../css/Matches.module.css";
+import { useNavigate } from 'react-router-dom';
 
 //http://localhost:3000/matches
 
@@ -11,8 +12,8 @@ function Matches() {
 
     function getTodayDate() {
         const today = new Date();
-        // today.setDate(23);
-        // today.setHours(0, 0, 0, 0);
+        today.setDate(23);
+        today.setHours(0, 0, 0, 0);
         return today.toISOString().split('T')[0]; // This returns the date in 'YYYY-MM-DD' format
     }
 
@@ -59,7 +60,7 @@ function Matches() {
     return (
         <div className={styles.MatchMainContainer}>
             <div className={styles.Container}>
-                <DateSelector date={selectedDate} dateFunc={setSelectedDate} />
+                <DateSelector date={selectedDate}  dateFunc={setSelectedDate}/>
                 <div className="league-list">
                     {Object.entries(leagues).map(([leagueName, matches]) => (
                         <League key={leagueName} name={leagueName} matches={matches} />
@@ -72,16 +73,17 @@ function Matches() {
 };
 
 function DateSelector({ date }) {
-    const handleDateChange = (event) => {
-        dateFunc(event.target.value);
-    };
+    // const handleDateChange = (event) => {
+    //     dateFunc(event.target.value);
+    // };
 
     return (
         <div className={styles.CalendarContainer}>
             <div className={styles.CalendarInnerContainer}>
                 <p className={styles.CalendarText}>select a date</p>
                 {/* treba da se sredi kalendarot */}
-                <input type="date" value={date} onChange={handleDateChange}/>
+                {/* <input type="date" value={date} onChange={handleDateChange}/> */}
+                <input type="date" value={date}/>
                 <button className="calendar-button">📅</button>
                 <span className="date">{date}</span>
                 <hr />
@@ -101,6 +103,7 @@ function League({ name, matches }) {
                 {matches.map((match) => (
                     <MatchRow 
                         key={match.id} 
+                        matchId={match.id}
                         homeTeam={match.homeTeamName} 
                         awayTeam={match.awayTeamName} 
                         score={`${match.homeTeamScore} : ${match.awayTeamScore}`}
@@ -113,9 +116,14 @@ function League({ name, matches }) {
     );
 }
 
-function MatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest }) {
+function MatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId }) {
+    const navigate = useNavigate();  // Use for redirection
+    const goTo = () => {
+        navigate(`/matches/${matchId}`);
+    };
     return (
-        <div className={styles.MatchRow}>
+        <div className={styles.MatchRow} onClick={goTo}>
+            {/* <div className={styles.MatchRow}> */}
             <img src={homeCrest} alt={`${homeTeam} crest`} className={styles.TeamPhoto} />
             <div className={styles.TeamName}>{homeTeam}</div>
             <div>{score}</div>

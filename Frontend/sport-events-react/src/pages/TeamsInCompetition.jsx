@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
+import styles from "../css/TeamsInCompetition.module.css";
 
 //http://localhost:3000/competitions/2013
 
@@ -39,10 +40,19 @@ function TeamsInCompetition() {
     }
 
     return (
-        <div>
-            <h1>Data from API:</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-        </div>
+    <div className={styles.MainContainer}>
+        <div className={styles.grid_container}>
+             {data && data.map((competition) => (
+                 <NavLink to={`/competitions/${competition.id}/teams`} key={competition.id}>
+                     <img 
+                         src={competition.crest} 
+                         alt={competition.name} 
+                         className={`${styles.grid_item} ${styles.competitionImage}`} 
+                     />
+                 </NavLink>
+             ))}
+         </div>
+     </div>
     );
 };
 
