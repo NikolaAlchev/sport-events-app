@@ -8,6 +8,7 @@ import { faLocationDot, faCircleChevronLeft } from '@fortawesome/free-solid-svg-
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function SingleEvent() {
     const { id } = useParams();
@@ -160,7 +161,7 @@ function SingleEvent() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (

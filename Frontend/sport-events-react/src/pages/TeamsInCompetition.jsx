@@ -3,6 +3,7 @@ import { useParams, NavLink } from 'react-router-dom';
 import styles from "../css/TeamsInCompetition.module.css";
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function TeamsInCompetition() {
     const [data, setData] = useState(null);
@@ -34,21 +35,21 @@ function TeamsInCompetition() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (
 
         <div>
-            <ImageBanner image={imageUrl} title={"Select a team"}></ImageBanner>
+            <ImageBanner image={imageUrl} title={"Select a Team"}></ImageBanner>
             <div className={styles.MainContainer}>
                 <div className={styles.grid_container}>
                     {data && data.map((competition) => (
-                        <NavLink to={`/competitions/${competition.id}/teams`} key={competition.id}>
+                        <NavLink to={`/competitions/${competition.id}/teams`} key={competition.id} className={styles.teamLink}>
                             <img
                                 src={competition.crest}
                                 alt={competition.name}
-                                className={`${styles.grid_item} ${styles.competitionImage}`}
+                                className={`${styles.grid_item} ${styles.teamImage}`}
                             />
                         </NavLink>
                     ))}

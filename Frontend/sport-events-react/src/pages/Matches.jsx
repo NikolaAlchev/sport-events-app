@@ -4,6 +4,7 @@ import League from "../components/League";
 import DateSelector from "../components/DateSelector";
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function Matches() {
     const [data, setData] = useState(null);
@@ -14,8 +15,6 @@ function Matches() {
 
     function getTodayDate() {
         const today = new Date();
-        today.setDate(23);
-        today.setHours(0, 0, 0, 0);
         return today.toISOString().split('T')[0];
     }
 
@@ -46,7 +45,7 @@ function Matches() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error />;
     }
 
     const leagues = data.reduce((acc, match) => {

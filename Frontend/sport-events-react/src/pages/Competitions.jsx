@@ -3,6 +3,7 @@ import styles from "../css/Competitions.module.css";
 import { NavLink } from 'react-router-dom';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function Competitions() {
     const [data, setData] = useState(null);
@@ -33,16 +34,16 @@ function Competitions() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (
         <div>
-            <ImageBanner image={imageUrl} title={"Select a league"}></ImageBanner>
+            <ImageBanner image={imageUrl} title={"Select a League"}></ImageBanner>
             <div className={styles.MainContainer}>
                 <div className={styles.grid_container}>
                     {data && data.map((competition, index) => (
-                        <NavLink to={`/competitions/${competition.id}`} key={competition.id}>
+                        <NavLink to={`/competitions/${competition.id}`} key={competition.id} className={styles.leagueLink}>
                             <img
                                 key={index}
                                 src={competition.emblem}

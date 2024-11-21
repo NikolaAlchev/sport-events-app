@@ -20,13 +20,22 @@
   border-radius: 5px;
 }
 
-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  cursor: pointer;
+.teamLink{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-img:hover {
-  filter: brightness(50%);
+.teamImage {
+  display: block;
+  min-width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.teamImage:hover {
+  transform: scale(1.1);
 }

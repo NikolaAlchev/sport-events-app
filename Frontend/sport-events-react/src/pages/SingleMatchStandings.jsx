@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 //http://localhost:3000/matches/502427/standings?homeTeam=4&awayTeam=20
 
@@ -37,7 +38,7 @@ function SingleMatchStandings() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (

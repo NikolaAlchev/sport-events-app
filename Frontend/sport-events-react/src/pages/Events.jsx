@@ -6,6 +6,7 @@ import "../css/Events.css";
 import { Row, Col, Container, Button, Form } from 'react-bootstrap';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function Events() {
     const [data, setData] = useState(null);
@@ -112,7 +113,7 @@ function Events() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (

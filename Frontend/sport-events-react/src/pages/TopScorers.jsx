@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
+import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 // http://localhost:3000/competitions/2013/topScorers
 
@@ -10,15 +12,12 @@ function TopScorers() {
     const { id } = useParams();
 
     useEffect(() => {
-
-        // Make GET request
         fetch(`http://localhost:5260/player/${id}/topScorers`)
             .then((response) => {
                 if (!response.ok) {
 
                     throw new Error("Network response was not ok");
                 }
-                // console.log(response.json())
                 return response.json();
             })
             .then((data) => {
@@ -29,14 +28,14 @@ function TopScorers() {
                 setError(error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array to ensure it runs once after the component mounts
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader/>;
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (

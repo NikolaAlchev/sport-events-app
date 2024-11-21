@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function SingleMatch() {
     const [data, setData] = useState(null);
@@ -38,7 +39,7 @@ function SingleMatch() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     const handleButtonClick = (buttonNumber) => {
@@ -51,6 +52,9 @@ function SingleMatch() {
         standings: 67
     }[activeButton];
 
+    const timeOnly = new Date(data.utcDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    console.log(timeOnly)
+
     return (
         <div>
             <ImageBanner image={imageUrl} title={data.homeTeamName + " vs " + data.awayTeamName}></ImageBanner>
@@ -61,7 +65,7 @@ function SingleMatch() {
                 <div className={styles.MatchRow}>
                     <img src={data.homeTeamCrest} alt={`${data.homeTeamCrest} crest`} className={styles.TeamPhoto} />
                     <div className={styles.TeamName}>{data.homeTeamName}</div>
-                    <div>{`${data.homeTeamScore} : ${data.awayTeamScore}`}</div>
+                    <div className={styles.score}>{data.status === "TIMED" || data.status === "SCHEDULED" ? timeOnly : `${data.homeTeamScore} : ${data.awayTeamScore}`}</div>
                     <div className={styles.TeamName}>{data.awayTeamName}</div>
                     <img src={data.awayTeamCrest} alt={`${data.awayTeamCrest} crest`} className={styles.TeamPhoto} />
                 </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
 import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 // http://localhost:3000/team/2013?name=Fluminense%20FC
 
@@ -40,7 +41,7 @@ function Team() {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <Error/>;
     }
 
     return (

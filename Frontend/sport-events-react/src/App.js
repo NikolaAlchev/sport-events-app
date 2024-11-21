@@ -28,6 +28,7 @@ function App() {
 
       <main className="main-content" style={{minHeight : "100vh"}}>
         <Routes>
+          <Route path="/" element={<Matches />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/matches/:id" element={<SingleMatch />} />
           <Route path="/matches/:id/standings" element={<SingleMatchStandings />} />

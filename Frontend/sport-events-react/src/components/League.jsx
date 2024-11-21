@@ -17,6 +17,8 @@ function League({ name, matches, emblem }) {
                         awayTeam={match.awayTeamName} 
                         score={`${match.homeTeamScore} : ${match.awayTeamScore}`}
                         homeCrest={match.homeTeamCrest}
+                        utcDate={match.utcDate}
+                        status={match.status}
                     awayCrest={match.awayTeamCrest}
                     />
                 ))}
