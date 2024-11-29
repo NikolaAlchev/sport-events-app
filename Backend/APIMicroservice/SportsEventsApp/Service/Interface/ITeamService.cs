@@ -11,5 +11,6 @@ namespace Service.Interface
     {
         public Task<TeamPositionDTO> GetTeamByCompetitionIdAndName(int id, string teamName);
         public Task<List<BasicPlayerInfoDTO>>GetSquadFromTeamId(int id);
+        public Task<TeamInfoDTO> GetTeamById(int id);
     }
 }

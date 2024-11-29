@@ -45,7 +45,7 @@ function TeamsInCompetition() {
             <div className={styles.MainContainer}>
                 <div className={styles.grid_container}>
                     {data && data.map((competition) => (
-                        <NavLink to={`/competitions/${competition.id}/teams`} key={competition.id} className={styles.teamLink}>
+                        <NavLink to={`/team/${competition.id}`} key={competition.id} className={styles.teamLink}>
                             <img
                                 src={competition.crest}
                                 alt={competition.name}

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Domain.DTO;
 using Repository.Interface;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Repository.Implementation
 {
-    public class TeamRepo:ITeamRepo
+    public class TeamRepo : ITeamRepo
     {
-            
+
         private readonly HttpClient _httpClient;
 
         public TeamRepo()
@@ -22,7 +23,7 @@ namespace Repository.Implementation
             _httpClient.DefaultRequestHeaders.Add("X-Auth-Token", "c516a9286e324f82a787a9fdd9afbbe9");
         }
 
-        public async  Task<List<BasicPlayerInfoDTO>> GetSquadFromTeamId(int id)
+        public async Task<List<BasicPlayerInfoDTO>> GetSquadFromTeamId(int id)
         {
             string url = $"http://api.football-data.org/v4/teams/{id}";
             try
@@ -38,17 +39,21 @@ namespace Repository.Implementation
                     var res = new List<BasicPlayerInfoDTO>();
                     foreach (var player in squadArray.EnumerateArray())
                     {
-                        var DTO = new BasicPlayerInfoDTO { 
+                        var DTO = new BasicPlayerInfoDTO
+                        {
                             Name = player.GetProperty("name").ToString(),
                             Id = player.GetProperty("id").GetInt32(),
-                            Position = player.GetProperty("position").ToString()
+                            Position = player.GetProperty("position").ToString(),
+                            Nationality = player.GetProperty("nationality").ToString(),
                         };
-                        res.Add(DTO);  
+                        res.Add(DTO);
                     }
-                    var CoachDTO = new BasicPlayerInfoDTO {
+                    var CoachDTO = new BasicPlayerInfoDTO
+                    {
                         Id = jsonDocument.RootElement.GetProperty("coach").GetProperty("id").GetInt32(),
                         Name = jsonDocument.RootElement.GetProperty("coach").GetProperty("name").ToString(),
-                        Position = "Coach"
+                        Position = "Coach",
+                        Nationality = jsonDocument.RootElement.GetProperty("coach").GetProperty("nationality").ToString(),
                     };
                     res.Add(CoachDTO);
 
@@ -82,7 +87,7 @@ namespace Repository.Implementation
                     var jsonDocument = JsonDocument.Parse(jsonResponse);
                     var standingsArray = jsonDocument.RootElement.GetProperty("standings");
 
-                   
+
                     foreach (var standing in standingsArray.EnumerateArray())
                     {
                         foreach (var team in standing.GetProperty("table").EnumerateArray())
@@ -105,8 +110,8 @@ namespace Repository.Implementation
                                 };
                                 return DTO;
                             }
-                           
-                          
+
+
                         }
 
                     }
@@ -127,5 +132,157 @@ namespace Repository.Implementation
                 return null;
             }
         }
+
+        public async Task<TeamInfoDTO> GetTeamById(int id)
+        {
+
+            try
+            {
+                TeamInfoDTO team = await getBasicTeamInfo(id);
+
+                await setPastAndFutureMatches(id, team);
+
+                return team;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return null;
+            }
+        }
+
+        private async Task<TeamInfoDTO> getBasicTeamInfo(int id)
+        {
+
+            TeamInfoDTO team = new TeamInfoDTO();
+
+            string url = $"http://api.football-data.org/v4/teams/{id}";
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var jsonDocument = JsonDocument.Parse(jsonResponse);
+
+                    team.Name = jsonDocument.RootElement.GetProperty("name").GetString();
+                    team.Venue = jsonDocument.RootElement.GetProperty("venue").GetString();
+                    team.Crest = jsonDocument.RootElement.GetProperty("crest").GetString();
+
+
+                    var squadArray = jsonDocument.RootElement.GetProperty("squad");
+
+                    var result = new List<BasicPlayerInfoDTO>();
+                    foreach (var player in squadArray.EnumerateArray())
+                    {
+                        var DTO = new BasicPlayerInfoDTO
+                        {
+                            Name = player.GetProperty("name").ToString(),
+                            Id = player.GetProperty("id").GetInt32(),
+                            Position = player.GetProperty("position").ToString(),
+                            Nationality = player.GetProperty("nationality").ToString(),
+                        };
+                        result.Add(DTO);
+                    }
+                    var CoachDTO = new BasicPlayerInfoDTO
+                    {
+                        Id = jsonDocument.RootElement.GetProperty("coach").GetProperty("id").GetInt32(),
+                        Name = jsonDocument.RootElement.GetProperty("coach").GetProperty("name").ToString(),
+                        Position = "Coach",
+                        Nationality = jsonDocument.RootElement.GetProperty("coach").GetProperty("nationality").ToString(),
+                    };
+                    result.Add(CoachDTO);
+
+                    team.Squad = result;
+                    return team;
+                }
+                else
+                {
+                    throw new Exception($"Request failed with status code: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return null;
+            }
+        }
+
+        private async Task setPastAndFutureMatches(int id, TeamInfoDTO team)
+        {
+            DateTime now = DateTime.Now;
+            string urlPastMatches = $"https://api.football-data.org/v4/teams/{id}/matches?limit=5&dateFrom={now.AddMonths(-1).ToString("yyyy-MM-dd")}&dateTo={now.ToString("yyyy-MM-dd")}";
+            string urlFutureMatches = $"https://api.football-data.org/v4/teams/{id}/matches?limit=20&dateFrom={now.ToString("yyyy-MM-dd")}&dateTo={now.AddMonths(2).ToString("yyyy-MM-dd")}";
+
+            try
+            {
+                team.PastMatches = await getLastOrNextFiveMatches(urlPastMatches);
+                team.FutureMatches = await getLastOrNextFiveMatches(urlFutureMatches);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+
+        private async Task<List<MatchDTO>> getLastOrNextFiveMatches(string url)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var jsonDocument = JsonDocument.Parse(jsonResponse);
+                var matchesJson = jsonDocument.RootElement.GetProperty("matches");
+
+                var lastFiveMatches = matchesJson.EnumerateArray().Take(5);
+
+                List<MatchDTO> matches = new List<MatchDTO>();
+                foreach (var singleMatch in lastFiveMatches)
+                {
+                    var DTO = new MatchDTO();
+                    DTO.HomeTeamName = singleMatch.GetProperty("homeTeam").GetProperty("name").ToString();
+                    DTO.Id = singleMatch.GetProperty("id").GetInt32();
+                    DTO.UtcDate = singleMatch.GetProperty("utcDate").GetDateTime();
+                    DTO.Status = singleMatch.GetProperty("status").ToString();
+                    DTO.HomeTeamId = singleMatch.GetProperty("homeTeam").GetProperty("id").GetInt32();
+                    DTO.AwayTeamName = singleMatch.GetProperty("awayTeam").GetProperty("name").ToString();
+                    DTO.AwayTeamId = singleMatch.GetProperty("awayTeam").GetProperty("id").GetInt32();
+                    if (singleMatch.TryGetProperty("score", out var score) && score.TryGetProperty("fullTime", out var fullTime))
+                    {
+                        DTO.HomeTeamScore = fullTime.TryGetProperty("home", out var homeScore) && homeScore.ValueKind != JsonValueKind.Null
+                            ? homeScore.GetInt32()
+                            : 0; // Default to 0 if null
+                        DTO.AwayTeamScore = fullTime.TryGetProperty("away", out var awayScore) && awayScore.ValueKind != JsonValueKind.Null
+                            ? awayScore.GetInt32()
+                            : 0; // Default to 0 if null
+                    }
+
+
+                    DTO.CompetitionName = singleMatch.GetProperty("competition").GetProperty("name").ToString();
+                    DTO.CompetitionId = singleMatch.GetProperty("competition").GetProperty("id").GetInt32();
+                    DTO.Venue = singleMatch.TryGetProperty("venue", out JsonElement venue) && venue.ValueKind != JsonValueKind.Null
+                                        ? venue.ToString() : null;
+                    DTO.HomeTeamCrest = singleMatch.GetProperty("homeTeam").GetProperty("crest").ToString();
+                    DTO.AwayTeamCrest = singleMatch.GetProperty("awayTeam").GetProperty("crest").ToString();
+                    DTO.LeagueEmblem = singleMatch.GetProperty("competition").GetProperty("emblem").ToString();
+                    matches.Add(DTO);
+                }
+
+                return matches;
+            }
+            else
+            {
+                // Handle non-success status codes here
+                throw new Exception($"Request failed with status code: {response.StatusCode}");
+            }
+
+
+        }
+
+
     }
 }

@@ -1,0 +1,36 @@
+.MatchRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding: 5px 20px;
+    border-radius: 20px;
+    transition: 0.15s ease;
+}
+
+.MatchRow:hover{
+    background-color: rgb(240, 240, 240);
+}
+
+.leftSide{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.TeamPhoto{
+    height: 50px;
+}
+
+.TeamCrestContainer{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin: 10px 20px;
+}
+
+.TeamCrestContainer p{
+    margin: 0 0 0 20px;
+}

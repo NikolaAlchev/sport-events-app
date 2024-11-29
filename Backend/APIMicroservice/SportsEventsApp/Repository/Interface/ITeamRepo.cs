@@ -12,5 +12,7 @@ namespace Repository.Interface
         public Task<TeamPositionDTO> GetTeamByCompetitionIdAndName(int id,string name);
 
         public Task<List<BasicPlayerInfoDTO>> GetSquadFromTeamId(int id);
+
+        public Task<TeamInfoDTO> GetTeamById(int id);
     }
 }

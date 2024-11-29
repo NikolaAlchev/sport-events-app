@@ -17,12 +17,18 @@ namespace Web.Controllers
         }
 
         [HttpGet("{id}")]
+        public async Task<TeamInfoDTO> GetTeamById(int id)
+        {
+            return await _teamService.GetTeamById(id);
+        }
+
+        /*[HttpGet("{id}")]
         public async Task<TeamPositionDTO> GetTeamByCompIdAndTeamName(int id, [FromQuery] string name)
         {
 
             return await _teamService.GetTeamByCompetitionIdAndName(id, name);
 
-        }
+        }*/
 
         [HttpGet("{id}/roster")]
         public async Task<List<BasicPlayerInfoDTO>> GetSquadOfTeamByTeamId(int id)

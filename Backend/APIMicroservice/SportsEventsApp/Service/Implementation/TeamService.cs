@@ -26,5 +26,10 @@ namespace Service.Implementation
         {
             return await _teamRepo.GetTeamByCompetitionIdAndName(id, teamName);
         }
+
+        public async Task<TeamInfoDTO> GetTeamById(int id)
+        {
+            return await _teamRepo.GetTeamById(id);
+        }
     }
 }

@@ -1,0 +1,77 @@
+.upperContent{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.teamCrestContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 70px;
+    margin: 50px 0;
+}
+
+.ButtonBackground {
+    background-color: #D9D9D9;
+    width: 80%;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: x-large;
+}
+
+.Button {
+    position: absolute;
+    top: 0;
+    width: 33%;
+    height: 100%;
+    background-color: #686868;
+    border-radius: 10px;
+    transition: left 0.3s ease;
+}
+
+.Text {
+    z-index: 10;
+    cursor: pointer;
+    width: 33%;
+    text-align: center;
+}
+
+.ActiveButton {
+    left: 33%;
+}
+
+.ActiveText {
+    color: white;
+    transition: 0.3s ease;
+}
+
+.NotActiveText {
+    color: #686868;
+    transition: 0.3s ease;
+}
+
+.outerContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+}

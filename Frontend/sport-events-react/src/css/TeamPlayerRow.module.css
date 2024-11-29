@@ -1,0 +1,32 @@
+.PlayerRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding: 5px 20px;
+    border-radius: 20px;
+    transition: 0.15s ease;
+}
+
+.leftSide{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.Nationality{
+    width: 35px;
+}
+
+.PlayerContainer{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin: 10px 20px;
+}
+
+.PlayerContainer p{
+    margin: 0 0 0 20px;
+}
