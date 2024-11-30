@@ -1,7 +1,7 @@
 import TeamMatchRow from "../components/TeamMatchRow"
 import styles from "../css/TeamLeague.module.css";
 
-function TeamLeague({ name, matches, emblem }) {
+function TeamLeague({ name, matches, emblem, year = true }) {
     return (
         <div className={styles.LeagueContainer}>
             <div className={styles.LeagueInnerContainer}>
@@ -20,6 +20,7 @@ function TeamLeague({ name, matches, emblem }) {
                         utcDate={match.utcDate}
                         status={match.status}
                         awayCrest={match.awayTeamCrest}
+                        year={year}
                     />
                 ))}
             </div>

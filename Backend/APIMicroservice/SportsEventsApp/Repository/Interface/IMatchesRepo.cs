@@ -12,5 +12,7 @@ namespace Repository.Interface
         public Task<List<MatchDTO>> getAllMatchesFromDate(DateOnly dateFrom);
         public Task<MatchDTO> getMatchById(int id);
         public Task<StandingsTableDTO> getStandingsTable(int competitionId);
+        public Task<List<MatchDTO>> getHead2Head(int id);
+
     }
 }

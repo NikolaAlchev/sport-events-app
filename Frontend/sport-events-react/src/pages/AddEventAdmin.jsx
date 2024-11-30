@@ -1,18 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import "../css/AddEventAdmin.css";
 import ImageBanner from "../components/ImageBanner";
 import BackButton from '../components/BackButton';
 
 const AddEventAdmin = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const initialData = location.state?.initialData;
+    const isEditMode = !!initialData;
+
     const imageUrl = "https://c4.wallpaperflare.com/wallpaper/971/967/737/sports-images-for-desktop-background-wallpaper-preview.jpg";
 
     useEffect(() => {
         checkAuthentication();
-    }, []);
 
+        if (initialData) {
+            setEventData({
+                Id: initialData.id || '',
+                Title: initialData.title || '',
+                Country: initialData.country || '',
+                Address: initialData.address || '',
+                Rating: initialData.rating || '',
+                Capacity: initialData.capacity || '',
+                Parking: initialData.parking || false,
+                ImageUrl: initialData.imageUrl || '',
+                Date: initialData.date.split('T')[0] || '',
+                StartTime: initialData.startTime || '',
+                EndTime: initialData.endTime || '',
+                GateOpenTime: initialData.gateOpenTime || '',
+                ReservationCloseTime: initialData.reservationCloseTime || '',
+                Price: initialData.price || '',
+                Label: initialData.label || '',
+                Description: initialData.description || '',
+            });
+        }
+    }, [initialData]);
 
     const checkAuthentication = () => {
         fetch('https://localhost:7023/api/user/is-admin', {
@@ -86,8 +111,12 @@ const AddEventAdmin = () => {
             ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
         };
 
-        fetch('https://localhost:7023/api/Events/AddEvent', {
-            method: 'POST',
+        console.log(updatedEventData)
+
+        const apiUrl = isEditMode ? `https://localhost:7023/api/Events/UpdateEvent` : "https://localhost:7023/api/Events/AddEvent";
+
+        fetch(apiUrl, {
+            method: isEditMode ? "PUT" : "POST",
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -105,7 +134,7 @@ const AddEventAdmin = () => {
                 }
             })
             .then((data) => {
-                console.log('Event created successfully:', data);
+                console.log('Event saved successfully:', data);
                 navigate(`/events/${data.id}`);
             })
             .catch((error) => {
@@ -154,7 +183,7 @@ const AddEventAdmin = () => {
 
     return (
         <div id="add-event-content">
-            <ImageBanner image={imageUrl} title={"Add Event"}></ImageBanner>
+            <ImageBanner image={imageUrl} title={isEditMode ? "Edit Event" : "Add Event"}></ImageBanner>
             <BackButton />
             <div id="add-event-bottom-container">
                 <Container>
@@ -232,7 +261,7 @@ const AddEventAdmin = () => {
                             </div>
                             <div className="button-group">
                                 <button type="button" className="excel-button" onClick={() => document.getElementById('file-upload').click()}>Import from Excel</button>
-                                <button type="submit" className="add-button">ADD</button>
+                                <button type="submit" className="add-button">{isEditMode ? "Save Changes" : "ADD"}</button>
                                 <input type="file" id="file-upload" style={{ display: 'none' }} accept=".xlsx, .xls" onChange={handleFileChange}/>
                             </div>
                         </div>

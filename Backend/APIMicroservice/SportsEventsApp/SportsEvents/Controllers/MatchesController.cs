@@ -28,15 +28,17 @@ namespace Web.Controllers
             return await _matchesService.getMatchById(id);
         }
 
-        [HttpGet("team/standings")]
+        [HttpGet("standings")]
         public async Task<List<StandingsTableDTO>> getStandings([FromQuery] int homeTeam, [FromQuery] int awayTeam)
         {
             return await _matchesService.getStandingsTableForComp(homeTeam, awayTeam);
         }
 
-        
-
-
+        [HttpGet("head2head")]
+        public async Task<List<MatchDTO>> getHead2Head([FromQuery] int id)
+        {
+            return await _matchesService.getHead2Head(id);
+        }
 
     }
 }

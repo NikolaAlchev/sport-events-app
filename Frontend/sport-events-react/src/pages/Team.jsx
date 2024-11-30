@@ -129,7 +129,7 @@ function Team() {
 
                             <Scrollbar style={{ width: "100%", height: 600 }}>
                                 {Object.entries(leaguesPast).map(([leagueName, matches]) => (
-                                    <TeamLeague key={leagueName} name={leagueName} matches={[...matches].reverse()} emblem={matches[0].leagueEmblem} />
+                                    <TeamLeague key={leagueName} name={leagueName} matches={[...matches].reverse()} emblem={matches[0].leagueEmblem} year={false}/>
                                 ))}
                             </Scrollbar>
                         }
@@ -138,7 +138,7 @@ function Team() {
 
                             <Scrollbar style={{ width: "100%", height: 600 }}>
                                 {Object.entries(leaguesFuture).map(([leagueName, matches]) => (
-                                    <TeamLeague key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} />
+                                    <TeamLeague key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} year={false}/>
                                 ))}
                             </Scrollbar>
                         }

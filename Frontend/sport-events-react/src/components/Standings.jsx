@@ -10,11 +10,9 @@ import styles from "../css/Standings.module.css"
 
 function Standings({ data }) {
 
-    console.log(data);
-
     return (
         <TableContainer component={Paper} style={{marginTop: 30}}>
-            <Table sx={{ minWidth: 750 }} aria-label="simple table">
+            <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Club</TableCell>

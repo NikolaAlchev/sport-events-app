@@ -3,6 +3,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: none;
     box-shadow: none;
+    position: relative;
 }
 
 .event-title {
@@ -31,4 +32,19 @@
 .event-price {
     font-size: 1.4rem;
     color: #000;
+}
+
+.event-edit-icon{
+    position: absolute;
+    bottom: 17px;
+    right: 15px;
+    font-size: 1.6rem;
+    color:#007BFF;
+    z-index: 1000;
+    transition: 0.15s ease;
+}
+
+.event-edit-icon:hover{
+    color:#66b0ff
+
 }

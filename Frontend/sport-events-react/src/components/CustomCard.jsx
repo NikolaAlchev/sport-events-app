@@ -3,10 +3,10 @@ import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import '../css/CustomCard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { faLocationDot, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-regular-svg-icons'
 
-const CustomCard = ({ json }) => {
+const CustomCard = ({ json, admin = false }) => {
     return (
         <Link to={`/events/${json.id}`} style={{ textDecoration: 'none' }}>
             <Card className="event-card mx-auto mb-4">
@@ -28,6 +28,13 @@ const CustomCard = ({ json }) => {
                         <strong>${json.price}</strong> <span style={{ color: "#505050", fontSize: "1.2rem" }}>/ Person</span>
                     </Card.Text>
                 </Card.Body>
+                { admin &&
+
+                    <Link to={`/admin/event/add`} state={{ initialData: json }} className='event-edit-icon'>
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                    </Link>
+                }
+
             </Card>
         </Link>
     );

@@ -189,7 +189,7 @@ function Events() {
                                 {data && data.length > 0 ? (
                                     data.map((event, index) => (
                                         <Col md={{ span: 5, offset: 1 }} key={index} className="mb-3">
-                                            <CustomCard json={event} />
+                                            <CustomCard json={event} admin={isAdmin}/>
                                         </Col>
                                     ))
                                 ) : (

@@ -1,14 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import styles from "../css/TeamMatchRow.module.css";
 
-function TeamMatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId, utcDate, status }) {
+function TeamMatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId, utcDate, status, year }) {
     const navigate = useNavigate();
     const goTo = () => {
         navigate(`/matches/${matchId}`);
     };
 
     const timeOnly = new Date(utcDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    const dateOnly = new Date(utcDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+
+
+    const dateOnly = year ? new Date(utcDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: "2-digit" }) :
+    new Date(utcDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })
 
     return (
         <div className={styles.MatchRow} onClick={goTo}>

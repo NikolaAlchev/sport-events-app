@@ -37,5 +37,7 @@ namespace Domain.DTO
 
         public string LeagueEmblem { get; set; }
 
+        public List<RefereeDTO> Referees { get; set; }
+
     }
 }

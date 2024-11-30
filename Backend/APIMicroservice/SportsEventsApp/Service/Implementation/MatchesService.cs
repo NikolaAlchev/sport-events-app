@@ -59,5 +59,11 @@ namespace Service.Implementation
         }
 
 
+        public async Task<List<MatchDTO>> getHead2Head(int id)
+        {
+            return await _matchesRepo.getHead2Head(id);
+        }
+
+
     }
 }
