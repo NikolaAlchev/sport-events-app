@@ -9,9 +9,9 @@ import Error from "../components/Error";
 function Matches() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [contentLoading, setContentLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(getTodayDate());
-    const imageUrl = "https://s3-alpha-sig.figma.com/img/538e/043c/26152d8ff671e48e2db70ae0ecbf5b6c?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=RzS8YbPX14vehZFb~AOWUsXtbbfPa28OgdTjW9HkrxDx4GHtmPztwVYZnfao0dMp1H2Z1R~O67Uwp4x~FpZbWcaKKOJdZaDOXmc7phvSH7UIyKUgc0CEFBO~9KEIkQuMiiboUt9adIzo2B5LKMBpCCbMHDzytTyUXqkcQlQCqc-EN~iJLKe1ZvRaUmzWfeoNtAen94PwZK-ZtJa8wuWevNCXN~wv-eExN~-kZ9vrK-MFcshXWyohpTKI8RNaP8grBbWRNADMl9DWvakiDCGw4ATFDhoJqRGoiCiAW8RhFTEzpMB12X66g7YMrFQpx7GAHuDXft2Yd2Lbh5PV314Vvw__";
 
     function getTodayDate() {
         const today = new Date();
@@ -19,6 +19,7 @@ function Matches() {
     }
 
     useEffect(() => {
+        setContentLoading(true);
         let formattedToday = selectedDate.split('T')[0];
         let [year, month, day] = formattedToday.split('-');
         formattedToday = `${month}-${day}-${year}`;
@@ -32,10 +33,12 @@ function Matches() {
             })
             .then((data) => {
                 setData(data);
+                setContentLoading(false);
                 setLoading(false);
             })
             .catch((error) => {
                 setError(error);
+                setContentLoading(false);
                 setLoading(false);
             });
     }, [selectedDate]);
@@ -59,16 +62,22 @@ function Matches() {
 
     return (
         <div>
-            <ImageBanner image={imageUrl} title={"Select a match"}></ImageBanner>
+            <ImageBanner title={"Select a match"}></ImageBanner>
             <div className={styles.MatchMainContainer}>
-
                 <div className={styles.Container}>
                     <DateSelector date={selectedDate} dateFunc={setSelectedDate} />
-                    <div className="league-list">
-                        {Object.entries(leagues).map(([leagueName, matches]) => (
-                            <League key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} />
-                        ))}
-                    </div>
+                    {contentLoading ?
+                        (
+                            <Loader height={"300px"} />
+                        ) : (
+                            <div className="league-list">
+                                {Object.entries(leagues).map(([leagueName, matches]) => (
+                                    <League key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} />
+                                ))}
+                            </div>
+                        )
+                    }
+
                 </div>
             </div>
         </div>

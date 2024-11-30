@@ -12,6 +12,10 @@
     align-items: center;
 }
 
+.teamCrest{
+    width: 200px;
+}
+
 .ButtonContainer {
     width: 100%;
     display: flex;

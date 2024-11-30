@@ -6,7 +6,7 @@
 }
 
 .MatchRow {
-    width: 50%;
+    width: 80%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,6 +15,14 @@
     padding: 20px 40px;
     margin-bottom: 50px;
     transition: 0.1s ease;
+}
+
+.TeamCrestContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: black;
 }
 
 .TeamPhoto {
@@ -33,17 +41,6 @@
     font-weight: 600;
 }
 
-.IconContainer {
-    position: absolute;
-    left: 40px;
-    font-size: 30px;
-    color: #161616;
-}
-
-.IconContainer>svg:hover {
-    color: rgb(99, 99, 99);
-}
-
 .ButtonContainer {
     width: 100%;
     display: flex;
@@ -53,7 +50,7 @@
 
 .ButtonBackground {
     background-color: #D9D9D9;
-    width: 50%;
+    width: 80%;
     border-radius: 10px;
     position: relative;
     display: flex;

@@ -29,7 +29,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("team/standings")]
-        public async Task<List<StandingsTableDTO>> getStandings(int homeTeam, int awayTeam)
+        public async Task<List<StandingsTableDTO>> getStandings([FromQuery] int homeTeam, [FromQuery] int awayTeam)
         {
             return await _matchesService.getStandingsTableForComp(homeTeam, awayTeam);
         }

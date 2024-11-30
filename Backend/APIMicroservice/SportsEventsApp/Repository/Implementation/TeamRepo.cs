@@ -213,7 +213,7 @@ namespace Repository.Implementation
         private async Task setPastAndFutureMatches(int id, TeamInfoDTO team)
         {
             DateTime now = DateTime.Now;
-            string urlPastMatches = $"https://api.football-data.org/v4/teams/{id}/matches?limit=5&dateFrom={now.AddMonths(-1).ToString("yyyy-MM-dd")}&dateTo={now.ToString("yyyy-MM-dd")}";
+            string urlPastMatches = $"https://api.football-data.org/v4/teams/{id}/matches?limit=5&dateFrom={now.AddMonths(-2).ToString("yyyy-MM-dd")}&dateTo={now.ToString("yyyy-MM-dd")}";
             string urlFutureMatches = $"https://api.football-data.org/v4/teams/{id}/matches?limit=20&dateFrom={now.ToString("yyyy-MM-dd")}&dateTo={now.AddMonths(2).ToString("yyyy-MM-dd")}";
 
             try

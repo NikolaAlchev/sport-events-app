@@ -1,0 +1,14 @@
+.IconContainer {
+    position: absolute;
+    left: 60px;
+    font-size: 2.2rem;
+    color: #686868;
+    transition: 0.15s ease color;
+    cursor: pointer;
+    z-index: 1000;
+    margin-top: 10px;
+}
+
+.IconContainer:hover {
+    color: #d9d9d9;
+}

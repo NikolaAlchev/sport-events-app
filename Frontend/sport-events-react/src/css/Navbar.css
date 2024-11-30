@@ -20,6 +20,7 @@ nav {
   color: black;
   text-decoration: none;
   margin: 0 15px;
+  margin-top: 10px;
   font-size: 20px;
 }
 
@@ -69,7 +70,7 @@ nav .active {
 }
 
 #username-container {
-  margin-top: 30px;
+  margin-top: 27px;
   margin-left: 20px;
   font-weight: 600;
   color: white;
@@ -84,7 +85,7 @@ nav .active {
 }
 
 #login-button-container {
-  margin-top: 30px;
+  margin-top: 27px;
   margin-right: 40px;
 }
 

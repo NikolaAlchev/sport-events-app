@@ -34,9 +34,9 @@ function App() {
           <Route path="/matches/:id/standings" element={<SingleMatchStandings />} />
           <Route path="/competitions" element={<Competitions />} />
           <Route path="/competitions/:id" element={<TeamsInCompetition />} />
-          <Route path="/competitions/:id/topScorers" element={<TopScorers />} />
           <Route path="/team/:id" element={<Team />} />
           <Route path="/team/:id/roster" element={<TeamRoster />} />
+          <Route path="/player" element={<TopScorers />} />
           <Route path="/player/:id" element={<Player />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<SingleEvent />} />

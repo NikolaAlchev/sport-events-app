@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import "../css/AddEventAdmin.css";
 import ImageBanner from "../components/ImageBanner";
+import BackButton from '../components/BackButton';
 
 const AddEventAdmin = () => {
     const navigate = useNavigate();
@@ -154,6 +155,7 @@ const AddEventAdmin = () => {
     return (
         <div id="add-event-content">
             <ImageBanner image={imageUrl} title={"Add Event"}></ImageBanner>
+            <BackButton />
             <div id="add-event-bottom-container">
                 <Container>
                     <form onSubmit={handleSubmit} className="form-container">

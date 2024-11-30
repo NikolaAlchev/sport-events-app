@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import ImageBanner from "../components/ImageBanner";
 
 // http://localhost:3000/competitions/2013/topScorers
 
@@ -12,7 +13,7 @@ function TopScorers() {
     const { id } = useParams();
 
     useEffect(() => {
-        fetch(`http://localhost:5260/player/${id}/topScorers`)
+        fetch(`http://localhost:5260/player/2021/topScorers`)
             .then((response) => {
                 if (!response.ok) {
 
@@ -40,6 +41,7 @@ function TopScorers() {
 
     return (
         <div>
+            <ImageBanner title = {"Select a Player"}/>
             <h1>Data from API:</h1>
             <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>

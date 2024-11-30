@@ -9,6 +9,7 @@ import { faStar } from '@fortawesome/free-regular-svg-icons';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import BackButton from "../components/BackButton";
 
 function SingleEvent() {
     const { id } = useParams();
@@ -46,24 +47,6 @@ function SingleEvent() {
         checkRegistered();
     }, []);
 
-
-    // const checkAuthentication = () => {
-    //     // Check with backend if the user is authenticated
-    //     fetch('https://localhost:7023/api/user/validate', {
-    //         method: 'GET',
-    //         credentials: 'include',  // This will send the HTTP-only cookie with the request
-    //     })
-    //         .then(response => {
-    //             if (response.ok) {
-    //                 setIsAuthenticated(true);
-    //             } else {
-    //                 setIsAuthenticated(false);
-    //             }
-    //         })
-    //         .catch(() => setIsAuthenticated(false));
-    // };
-
-
     const checkRegistered = () => {
         fetch(`https://localhost:7023/api/Events/register/check?eventId=${id}`, {
             method: 'GET',
@@ -86,8 +69,6 @@ function SingleEvent() {
                 setIsRegistered(false);
             });
     };
-
-
 
     const handleGoingClick = () => {
 
@@ -167,6 +148,7 @@ function SingleEvent() {
     return (
         <div className={style.singleEventContent}>
             <ImageBanner image={data.imageUrl} title={data.title}></ImageBanner>
+            <BackButton />
             <div className={style.singleEventBottomContainer}>
                 <Container style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
                     <h1 style={{ textAlign: 'center' }}>{data.title}</h1>
@@ -258,10 +240,6 @@ function SingleEvent() {
                         </Button>
                     </div>
                 </Container>
-                <div className={style.backButton} onClick={() => navigate('/events')}>
-                    <FontAwesomeIcon icon={faCircleChevronLeft} />
-                </div>
-
             </div>
 
         </div>
