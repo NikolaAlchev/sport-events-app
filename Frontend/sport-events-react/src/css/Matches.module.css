@@ -68,8 +68,17 @@
     border: 2px solid #E5E5E5;
 }
 
+.TeamPhotoWrapper{
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .TeamPhoto {
     height: 80px;
+    max-width: 80px;
 }
 
 .TeamName {

@@ -111,8 +111,6 @@ const AddEventAdmin = () => {
             ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
         };
 
-        console.log(updatedEventData)
-
         const apiUrl = isEditMode ? `https://localhost:7023/api/Events/UpdateEvent` : "https://localhost:7023/api/Events/AddEvent";
 
         fetch(apiUrl, {
@@ -129,7 +127,6 @@ const AddEventAdmin = () => {
                 } else if (response.status === 401) {
                     navigate('/user/login')
                 } else {
-                    console.log(response.body)
                     throw new Error("Couldn't add new event")
                 }
             })
@@ -178,6 +175,34 @@ const AddEventAdmin = () => {
         } catch (error) {
             console.error("Error uploading file:", error);
         }
+    };
+
+
+    const deleteEvent = () => {
+
+        const updatedEventData = {
+            ...eventData,
+            StartTime: appendMillisecondsIfNeeded(eventData.StartTime),
+            EndTime: appendMillisecondsIfNeeded(eventData.EndTime),
+            GateOpenTime: appendMillisecondsIfNeeded(eventData.GateOpenTime),
+            ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
+        };
+    
+        fetch(`https://localhost:7023/api/Events/DeleteEvent/${eventData.Id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            body: JSON.stringify(updatedEventData),
+        })
+        .then((response) => {
+            if (response.ok) {
+                navigate('/events');
+            } else {
+                throw new Error("Couldn't delete the event");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     };
 
 
@@ -260,7 +285,11 @@ const AddEventAdmin = () => {
                                 <textarea id="Description" name="Description" value={eventData.Description} onChange={handleChange} required/>
                             </div>
                             <div className="button-group">
+                                {isEditMode ? 
+                                <button type="button" className="delete-button" onClick={deleteEvent}>Delete</button>
+                                : 
                                 <button type="button" className="excel-button" onClick={() => document.getElementById('file-upload').click()}>Import from Excel</button>
+                                }
                                 <button type="submit" className="add-button">{isEditMode ? "Save Changes" : "ADD"}</button>
                                 <input type="file" id="file-upload" style={{ display: 'none' }} accept=".xlsx, .xls" onChange={handleFileChange}/>
                             </div>

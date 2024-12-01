@@ -34,7 +34,6 @@ function SingleMatch() {
                 return response.json();
             })
             .then((data) => {
-                console.log(data)
                 setData(data);
                 setLoading(false);
             })
@@ -93,7 +92,6 @@ function SingleMatch() {
                     return acc;
                 }, {});
                 setLeagues(temp);
-                console.log(temp);
                 setContentLoading(false);
             })
             .catch((error) => {
@@ -163,9 +161,9 @@ function SingleMatch() {
                                         <div>
                                             {data.referees && data.referees.length > 0 ? (
                                                 data.referees.map((referee, index) => (
-                                                    <div style={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+                                                    <div key={index} style={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
                                                         <Flag code={countryToISO[referee.nationality]} className={styles.Nationality} />
-                                                        <div key={index}>{referee.name}</div>
+                                                        <div>{referee.name}</div>
                                                     </div>
                                                 ))
                                             ) : (

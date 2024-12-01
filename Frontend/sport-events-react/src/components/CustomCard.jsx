@@ -25,10 +25,20 @@ const CustomCard = ({ json, admin = false }) => {
                     </Card.Text>
 
                     <Card.Text className="event-price">
-                        <strong>${json.price}</strong> <span style={{ color: "#505050", fontSize: "1.2rem" }}>/ Person</span>
+                        {
+                            json.price === 0 ?
+                                <div>
+                                    <strong>Free</strong> <span style={{ color: "#505050", fontSize: "1.2rem" }}> entrance</span>
+                                </div>
+
+                                :
+                                <div>
+                                    <strong>${json.price}</strong> <span style={{ color: "#505050", fontSize: "1.2rem" }}>/ Person</span>
+                                </div>
+                        }
                     </Card.Text>
                 </Card.Body>
-                { admin &&
+                {admin &&
 
                     <Link to={`/admin/event/add`} state={{ initialData: json }} className='event-edit-icon'>
                         <FontAwesomeIcon icon={faPenToSquare} />

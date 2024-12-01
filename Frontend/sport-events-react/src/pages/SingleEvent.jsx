@@ -60,8 +60,6 @@ function SingleEvent() {
                     throw new Error("Failed to check registration status");
                 }
             }).then(data => {
-
-                console.log("Registration status:", data.isRegistered);
                 setIsRegistered(data.isRegistered === "true");
             })
             .catch(error => {

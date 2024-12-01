@@ -32,3 +32,11 @@
     border-radius: 10px;
     margin: 0 30px;
 }
+
+.container{
+    display: block;
+}
+
+.Row{
+    min-width: 100% !important;
+}

@@ -10,7 +10,7 @@ import Error from "../components/Error";
 
 function Events() {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [contentLoading, setContentLoading] = useState(true);
     const [error, setError] = useState(null);
     const [offset, setOffset] = useState(0);
     const [country, setCountry] = useState("");
@@ -31,7 +31,7 @@ function Events() {
     }
 
     const fetchData = (offset, price, parking, rating, country, date, freeTicket) => {
-        setLoading(true);
+        setContentLoading(true)
         fetch(`https://localhost:7023/api/Events?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${price}&parking=${parking}&rating=${rating}&freeTicket=${freeTicket}`)
 
             .then((response) => {
@@ -42,11 +42,11 @@ function Events() {
             })
             .then((data) => {
                 setData(data);
-                setLoading(false);
+                setContentLoading(false);
             })
             .catch((error) => {
                 setError(error);
-                setLoading(false);
+                setContentLoading(false);
             });
     };
 
@@ -107,13 +107,8 @@ function Events() {
         navigate('/admin/event/add');
     };
 
-
-    if (loading) {
-        return <Loader/>;
-    }
-
     if (error) {
-        return <Error/>;
+        return <Error />;
     }
 
     return (
@@ -128,8 +123,8 @@ function Events() {
                     </div>
                     : ""}
                 <Container className={styles.container}>
-                    <Row>
-                        <Col xs={12} sm={6} md={3} lg={3} xl={2} className={styles.filterDiv}>
+                    <Row className={styles.Row}>
+                        <Col xs={12} sm={6} md={3} lg={3} xl={2} className={styles.filterDiv} style={{ width: "250px", maxWidth: "250px" }}>
                             <div>
                                 <h4>Filters</h4>
 
@@ -154,7 +149,7 @@ function Events() {
                                         </span>
                                     </div>
                                 </div>
-                                <hr className={styles.horizontalLine}/>
+                                <hr className={styles.horizontalLine} />
                                 <div className={styles.filterOption}>
                                     <label>Popular Filters</label>
                                     <div>
@@ -166,7 +161,7 @@ function Events() {
                                         </span>
                                     </div>
                                 </div>
-                                <hr className={styles.horizontalLine}/>
+                                <hr className={styles.horizontalLine} />
                                 <div className={styles.filterOption}>
                                     <label>Star Ratings</label>
                                     <div>
@@ -185,20 +180,23 @@ function Events() {
                         </Col>
 
                         <Col md={9} className={styles.cardGrid}>
-                            <Row className="g-4">
-                                {data && data.length > 0 ? (
-                                    data.map((event, index) => (
-                                        <Col md={{ span: 5, offset: 1 }} key={index} className="mb-3">
-                                            <CustomCard json={event} admin={isAdmin}/>
-                                        </Col>
-                                    ))
-                                ) : (
-                                    <div>No events found</div>
-                                )}
-                            </Row>
-
-
+                            {contentLoading ?
+                                <Loader height="100%" />
+                                :
+                                <Row className="g-4">
+                                    {data && data.length > 0 ? (
+                                        data.map((event, index) => (
+                                            <Col md={{ span: 5, offset: 1 }} key={index} className="mb-3" style={{ marginLeft: "60px", width: "380px" }}>
+                                                <CustomCard json={event} admin={isAdmin} />
+                                            </Col>
+                                        ))
+                                    ) : (
+                                        <div style={{ fontSize: "1.6rem", fontWeight: "600", margin: "50px" }}>No events found</div>
+                                    )}
+                                </Row>
+                            }
                         </Col>
+
                         <Row className="mt-4 g-4">
                             <Col className="text-center">
                                 <Button
