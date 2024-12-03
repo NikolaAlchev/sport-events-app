@@ -8,7 +8,7 @@ import Competitions from './pages/Competitions';
 import TeamsInCompetition from './pages/TeamsInCompetition';
 import Team from './pages/Team';
 import TopScorers from './pages/TopScorers';
-import Player from './pages/Player';
+import TopScorerLeague from './pages/TopScorerLeague';
 import TeamRoster from './pages/TeamRoster';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Events from './pages/Events';
@@ -36,8 +36,8 @@ function App() {
           <Route path="/competitions/:id" element={<TeamsInCompetition />} />
           <Route path="/team/:id" element={<Team />} />
           <Route path="/team/:id/roster" element={<TeamRoster />} />
-          <Route path="/player" element={<TopScorers />} />
-          <Route path="/player/:id" element={<Player />} />
+          <Route path="/player" element={<TopScorerLeague />} />
+          <Route path="/player/:id" element={<TopScorers />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<SingleEvent />} />
           <Route path="/user/register" element={<CreateUser />} />

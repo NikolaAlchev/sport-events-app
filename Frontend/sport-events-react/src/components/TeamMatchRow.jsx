@@ -17,7 +17,7 @@ function TeamMatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId
         <div className={styles.MatchRow} onClick={goTo}>
             <div className={styles.leftSide}>
                 <div>
-                    <p>{dateOnly}</p>
+                    <p style={{margin: '0px'}}>{dateOnly}</p>
                 </div>
                 <div>
                     <div className={styles.TeamCrestContainer}>
