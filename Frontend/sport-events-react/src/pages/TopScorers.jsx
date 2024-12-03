@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import ImageBanner from "../components/ImageBanner";
@@ -7,17 +7,18 @@ import styles from "../css/PlayerCard.module.css";
 import BackButton from "../components/BackButton";
 import Flag from "react-world-flags";
 import countryToISO from "../countryToISO";
-
-// http://localhost:3000/player/1077
+import { Container } from 'react-bootstrap';
 
 function TopScorers() {
+    const API_BASE_URL = process.env.REACT_APP_MATCHES_API_BASE_URL;
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { id } = useParams();
 
     useEffect(() => {
-        fetch(`http://localhost:5260/player/${id}/topScorers`)
+        fetch(`${API_BASE_URL}/player/${id}/topScorers`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -46,6 +47,7 @@ function TopScorers() {
         <div>
             <ImageBanner title={"Top Scorers"}></ImageBanner>
             <BackButton />
+            <Container className={styles.outerContainer}>
             <div className={styles.players_list}>
                 {data && data.map((player, index) => (
                     <div className={styles.player_card} key={player.id}>
@@ -54,15 +56,16 @@ function TopScorers() {
                             src={player.currentTeamCrest} 
                             alt={`${player.currentTeamName} crest`} 
                             className={styles.team_crest}/>
-                        <h3>{player.firstName} {player.lastName}</h3>
+                        <h3 className={styles.playerName}>{player.firstName} {player.lastName}</h3>
                         <Flag code={countryToISO[player.nationality]} className={styles.Nationality} />
-                        <p>Goals: {player.goals}</p>
-                        <p>Assists: {player.assists}</p>
-                        <p>Penalties: {player.penalties}</p>
-                        <p>Team: {player.currentTeamName}</p>
+                        <p className={styles.playerStats}>Goals: {player.goals}</p>
+                        <p className={styles.playerStats}>Assists: {player.assists}</p>
+                        <p className={styles.playerStats}>Penalties: {player.penalties}</p>
+                        <p className={styles.playerStats}>Team: {player.currentTeamName}</p>
                     </div>
                 ))}
             </div>
+            </Container>
         </div>
     );
 };

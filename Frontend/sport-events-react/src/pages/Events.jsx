@@ -9,6 +9,8 @@ import Loader from "../components/Loader";
 import Error from "../components/Error";
 
 function Events() {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
+    
     const [data, setData] = useState(null);
     const [contentLoading, setContentLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,7 +34,7 @@ function Events() {
 
     const fetchData = (offset, price, parking, rating, country, date, freeTicket) => {
         setContentLoading(true)
-        fetch(`https://localhost:7023/api/Events?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${price}&parking=${parking}&rating=${rating}&freeTicket=${freeTicket}`)
+        fetch(`${API_BASE_URL}/api/Events?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${price}&parking=${parking}&rating=${rating}&freeTicket=${freeTicket}`)
 
             .then((response) => {
                 if (!response.ok) {
@@ -56,7 +58,7 @@ function Events() {
     }, [offset, priceFilter, parking, starRating, date, freeTicket]);
 
     useEffect(() => {
-        fetch(`https://localhost:7023/api/User/is-admin`, {
+        fetch(`${API_BASE_URL}/api/User/is-admin`, {
             credentials: 'include'
         })
             .then((response) => {
@@ -108,7 +110,7 @@ function Events() {
     };
 
     const saveAsPDF = () => {
-        fetch(`https://localhost:7023/api/Events/SaveAsPDF?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${priceFilter}&parking=${parking}&rating=${starRating}&freeTicket=${freeTicket}`, {
+        fetch(`${API_BASE_URL}/api/Events/SaveAsPDF?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${priceFilter}&parking=${parking}&rating=${starRating}&freeTicket=${freeTicket}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -171,10 +173,10 @@ function Events() {
                                     <label>Price</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            From Lowest <input type="radio" name="price" value="1" onClick={handlePriceFilter} defaultChecked={priceFilter === 1} />
+                                            From Lowest <input type="radio" name="price" value="1" onClick={handlePriceFilter} checked={priceFilter === 1} defaultChecked={priceFilter === 1} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            From Highest <input type="radio" name="price" value="2" onClick={handlePriceFilter} defaultChecked={priceFilter === 2} />
+                                            From Highest <input type="radio" name="price" value="2" onClick={handlePriceFilter} checked={priceFilter === 2}  defaultChecked={priceFilter === 2} />
                                         </span>
                                     </div>
                                 </div>
@@ -183,10 +185,10 @@ function Events() {
                                     <label>Popular Filters</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            Free Ticket <input type="radio" name="freeTicket" onClick={handleFreeTicketFilter} defaultChecked={freeTicket === 1} />
+                                            Free Ticket <input type="radio" name="freeTicket" onClick={handleFreeTicketFilter} checked={freeTicket === 1} defaultChecked={freeTicket === 1} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            Parking <input type="radio" name="parking" onClick={handleParkingFilter} defaultChecked={parking === 1} />
+                                            Parking <input type="radio" name="parking" onClick={handleParkingFilter} checked={parking === 1} defaultChecked={parking === 1} />
                                         </span>
                                     </div>
                                 </div>
@@ -195,13 +197,13 @@ function Events() {
                                     <label>Star Ratings</label>
                                     <div>
                                         <span className={styles.inputContainer}>
-                                            5 Stars <input type="radio" name="rating" value="5" onClick={handleRatingFilter} defaultChecked={starRating === 5} />
+                                            5 Stars <input type="radio" name="rating" value="5" onClick={handleRatingFilter} checked={starRating === 5} defaultChecked={starRating === 5} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            4 Stars <input type="radio" name="rating" value="4" onClick={handleRatingFilter} defaultChecked={starRating === 4} />
+                                            4 Stars <input type="radio" name="rating" value="4" onClick={handleRatingFilter} checked={starRating === 4} defaultChecked={starRating === 4} />
                                         </span>
                                         <span className={styles.inputContainer}>
-                                            3 Stars<input type="radio" name="rating" value="3" onClick={handleRatingFilter} defaultChecked={starRating === 3} />
+                                            3 Stars<input type="radio" name="rating" value="3" onClick={handleRatingFilter} checked={starRating === 3} defaultChecked={starRating === 3} />
                                         </span>
                                     </div>
                                 </div>

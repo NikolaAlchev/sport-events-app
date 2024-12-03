@@ -14,9 +14,10 @@ import Flag from "react-world-flags";
 import countryToISO from "../countryToISO";
 
 function SingleMatch() {
+    const API_BASE_URL = process.env.REACT_APP_MATCHES_API_BASE_URL;
+
     const [data, setData] = useState(null);
     const [standings, setStandings] = useState(null);
-    const [head2head, setHead2Head] = useState(null);
     const [leagues, setLeagues] = useState(null);
     const [loading, setLoading] = useState(true);
     const [contentLoading, setContentLoading] = useState(true);
@@ -26,7 +27,7 @@ function SingleMatch() {
 
     useEffect(() => {
 
-        fetch(`http://localhost:5260/matches/${id}`)
+        fetch(`${API_BASE_URL}/matches/${id}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -57,7 +58,7 @@ function SingleMatch() {
     };
 
     const getStandingsData = async () => {
-        fetch(`http://localhost:5260/matches/standings?homeTeam=${data.homeTeamId}&awayTeam=${data.awayTeamId}`)
+        fetch(`${API_BASE_URL}/matches/standings?homeTeam=${data.homeTeamId}&awayTeam=${data.awayTeamId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -74,7 +75,7 @@ function SingleMatch() {
     }
 
     const getHead2HeadData = async () => {
-        fetch(`http://localhost:5260/matches/head2head?id=${id}`)
+        fetch(`${API_BASE_URL}/matches/head2head?id=${id}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -82,7 +83,6 @@ function SingleMatch() {
                 return response.json();
             })
             .then((data) => {
-                setHead2Head(data);
                 const temp = data.reduce((acc, match) => {
                     const { competitionName } = match;
                     if (!acc[competitionName]) {
@@ -98,8 +98,6 @@ function SingleMatch() {
                 setError(error);
             });
     }
-
-
 
     const buttonPosition = {
         details: 0,

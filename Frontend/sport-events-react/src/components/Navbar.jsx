@@ -4,13 +4,15 @@ import '../css/Navbar.css';
 
 
 function Navbar() {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
+
     const navigate = useNavigate();
     const location = useLocation();
     const [username, setUsername] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-        fetch('https://localhost:7023/api/User/validate', {
+        fetch(`${API_BASE_URL}/api/User/validate`, {
             method: 'GET',
             credentials: 'include',
         })
@@ -37,7 +39,7 @@ function Navbar() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('https://localhost:7023/api/User/Logout', {
+            const response = await fetch(`${API_BASE_URL}/api/User/Logout`, {
                 method: 'POST',
                 credentials: 'include',
             });

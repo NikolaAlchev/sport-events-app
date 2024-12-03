@@ -4,6 +4,8 @@ import style from "../css/Login.module.css"
 
 
 function LoginUser() {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
+
     const navigate = useNavigate()
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -27,7 +29,7 @@ function LoginUser() {
         setError('');
 
         try {
-            const response = await fetch('https://localhost:7023/api/User/Login', {
+            const response = await fetch(`${API_BASE_URL}/api/User/Login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

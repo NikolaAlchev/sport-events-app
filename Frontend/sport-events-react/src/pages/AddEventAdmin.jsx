@@ -6,6 +6,8 @@ import ImageBanner from "../components/ImageBanner";
 import BackButton from '../components/BackButton';
 
 const AddEventAdmin = () => {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -40,7 +42,7 @@ const AddEventAdmin = () => {
     }, [initialData]);
 
     const checkAuthentication = () => {
-        fetch('https://localhost:7023/api/user/is-admin', {
+        fetch(`${API_BASE_URL}/api/user/is-admin`, {
             method: 'GET',
             credentials: 'include'
         })
@@ -111,7 +113,7 @@ const AddEventAdmin = () => {
             ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
         };
 
-        const apiUrl = isEditMode ? `https://localhost:7023/api/Events/UpdateEvent` : "https://localhost:7023/api/Events/AddEvent";
+        const apiUrl = isEditMode ? `${API_BASE_URL}/api/Events/UpdateEvent` : `${API_BASE_URL}/api/Events/AddEvent`;
 
         fetch(apiUrl, {
             method: isEditMode ? "PUT" : "POST",
@@ -145,7 +147,7 @@ const AddEventAdmin = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('https://localhost:7023/api/Events/UploadExcel', {
+            const response = await fetch(`${API_BASE_URL}/api/Events/UploadExcel`, {
                 method: 'POST',
                 body: formData
             });
@@ -188,7 +190,7 @@ const AddEventAdmin = () => {
             ReservationCloseTime: appendMillisecondsIfNeeded(eventData.ReservationCloseTime)
         };
     
-        fetch(`https://localhost:7023/api/Events/DeleteEvent/${eventData.Id}`, {
+        fetch(`${API_BASE_URL}/api/Events/DeleteEvent/${eventData.Id}`, {
             method: 'DELETE',
             credentials: 'include',
             body: JSON.stringify(updatedEventData),

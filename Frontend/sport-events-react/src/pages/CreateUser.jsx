@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const CreateUser = () => {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
 
     const [formData, setFormData] = useState({
         UserName: '',
@@ -14,7 +15,6 @@ const CreateUser = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
-    // Handle form input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -23,14 +23,13 @@ const CreateUser = () => {
         });
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
         try {
-            const response = await fetch('https://localhost:7023/api/User/CreateUser', {
+            const response = await fetch(`${API_BASE_URL}/api/User/CreateUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

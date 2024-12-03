@@ -6,12 +6,14 @@ import Loader from "../components/Loader";
 import Error from "../components/Error";
 
 function TopScorerLeague() {
+    const API_BASE_URL = process.env.REACT_APP_MATCHES_API_BASE_URL;
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
  
     useEffect(() => {
-        fetch(`http://localhost:5260/competitions/all`)
+        fetch(`${API_BASE_URL}/competitions/all`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");

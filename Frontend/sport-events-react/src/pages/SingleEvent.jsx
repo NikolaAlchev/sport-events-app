@@ -4,7 +4,7 @@ import { Button, Row, Col, Container } from 'react-bootstrap';
 import style from "../css/SingleEvent.module.css";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot, faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
@@ -12,6 +12,8 @@ import Error from "../components/Error";
 import BackButton from "../components/BackButton";
 
 function SingleEvent() {
+    const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
+
     const { id } = useParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ function SingleEvent() {
     const fetchData = () => {
         setLoading(true);
 
-        fetch(`https://localhost:7023/api/Events/GetEvent/${id}`)
+        fetch(`${API_BASE_URL}/api/Events/GetEvent/${id}`)
 
             .then((response) => {
                 if (!response.ok) {
@@ -48,7 +50,7 @@ function SingleEvent() {
     }, []);
 
     const checkRegistered = () => {
-        fetch(`https://localhost:7023/api/Events/register/check?eventId=${id}`, {
+        fetch(`${API_BASE_URL}/api/Events/register/check?eventId=${id}`, {
             method: 'GET',
             credentials: 'include',
         })
@@ -70,7 +72,7 @@ function SingleEvent() {
 
     const handleGoingClick = () => {
 
-        fetch(`https://localhost:7023/api/Events/register`, {
+        fetch(`${API_BASE_URL}/api/Events/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

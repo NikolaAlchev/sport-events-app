@@ -7,13 +7,15 @@ import Error from "../components/Error";
 import BackButton from "../components/BackButton";
 
 function TeamsInCompetition() {
+    const API_BASE_URL = process.env.REACT_APP_MATCHES_API_BASE_URL;
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { id } = useParams();
     
     useEffect(() => {
-        fetch(`http://localhost:5260/competitions/${id}/teams`)
+        fetch(`${API_BASE_URL}/competitions/${id}/teams`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
