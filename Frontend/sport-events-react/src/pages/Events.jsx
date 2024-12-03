@@ -107,6 +107,35 @@ function Events() {
         navigate('/admin/event/add');
     };
 
+    const saveAsPDF = () => {
+        fetch(`https://localhost:7023/api/Events/SaveAsPDF?offset=${offset}&limit=${limit}&date=${date}&country=${country}&price=${priceFilter}&parking=${parking}&rating=${starRating}&freeTicket=${freeTicket}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.blob();
+        })
+        .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Events.pdf';
+            
+            link.click();
+            
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+            console.error("Error during file download:", error);
+        });
+    };
+
     if (error) {
         return <Error />;
     }
@@ -177,6 +206,7 @@ function Events() {
                                     </div>
                                 </div>
                             </div>
+                            
                         </Col>
 
                         <Col md={9} className={styles.cardGrid}>
@@ -216,6 +246,7 @@ function Events() {
                                 </Button>
                             </Col>
                         </Row>
+                        <button className="pdf-button" onClick={saveAsPDF}>Save as PDF</button>
                     </Row>
                 </Container>
             </div>

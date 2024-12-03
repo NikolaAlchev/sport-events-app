@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using Domain.DTO;
 using Domain.Identity;
 using Domain.Model;
+using GemBox.Document;
 using Microsoft.AspNetCore.Http;
 using Repository.Implementation;
 using Repository.Interface;
@@ -15,11 +16,12 @@ namespace Service.Implementation
         private readonly IRepository<Event> _eventRepository;
         private readonly IEventsRepository _eventsRepository;
         private readonly IEventUserRepository _eventUserRepository;
-        public EventService(IRepository<Event> eventRepository, IEventsRepository eventsRepository , IEventUserRepository eventUserRepository)
+        public EventService(IRepository<Event> eventRepository, IEventsRepository eventsRepository, IEventUserRepository eventUserRepository)
         {
             _eventRepository = eventRepository;
             _eventsRepository = eventsRepository;
-            _eventUserRepository = eventUserRepository;  
+            _eventUserRepository = eventUserRepository;
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
         }
 
         public Event AddEvent(Event e)
@@ -49,7 +51,7 @@ namespace Service.Implementation
 
         public List<Event> GetAllPaginated(int offset, int limit)
         {
-            return _eventRepository.GetAllPaginated(offset,limit).ToList();
+            return _eventRepository.GetAllPaginated(offset, limit).ToList();
         }
 
         public List<Event> GetAllPaginated(int offset, int limit, string date, string country, int price, int parking, int rating, int freeTicket)
@@ -71,9 +73,9 @@ namespace Service.Implementation
 
             if (resDate < currentDate)
             {
-             
+
                 throw new ArgumentException("Cannot reserve a seat. The event has already ended.");
-             
+
             }
             else if (resDate == currentDate)
             {
@@ -90,8 +92,8 @@ namespace Service.Implementation
             }
             if (!userIds.Contains(UserId))
             {
-                    var eventUser = _eventUserRepository.AddEventUser(UserId, EventId);
-                    return eventUser;
+                var eventUser = _eventUserRepository.AddEventUser(UserId, EventId);
+                return eventUser;
 
             }
             throw new AccessViolationException("Can't Reserve more then 1 seat");
@@ -104,7 +106,7 @@ namespace Service.Implementation
             if (usersFromEvent.Contains(userId))
             {
 
-                return new RegisteredDTO { IsRegistered = "true"};
+                return new RegisteredDTO { IsRegistered = "true" };
             }
             return new RegisteredDTO { IsRegistered = "false" };
         }
