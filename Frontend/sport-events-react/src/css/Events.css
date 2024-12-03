@@ -40,3 +40,13 @@
 .Row{
     min-width: 100% !important;
 }
+
+.pdf-button{
+    background-color: #A9D0F4;
+    font-size: 25px;
+    border-radius: 10px;
+    width: 250px;
+    border: none;
+    padding: 10px 40px;
+    margin-top: -50px;
+}

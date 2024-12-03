@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Domain.DTO;
 using Domain.Model;
+using GemBox.Document;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,8 +29,8 @@ namespace EventsApp.Controllers
             var events = _eventService.GetAll();
             return Ok(events);
         }
-        // GET: api/Events?offset=0&limit=6
 
+        // GET: api/Events?offset=0&limit=6
         [HttpGet("")]
         public ActionResult<List<Event>> GetAllEventsPaginated([FromQuery] int offset = 0, [FromQuery] int limit = 6, [FromQuery] string date = "", [FromQuery] string country = "", [FromQuery] int price = 0, [FromQuery] int parking = 0,[FromQuery] int rating = 0, [FromQuery] int freeTicket = 0)
         {
@@ -40,6 +41,53 @@ namespace EventsApp.Controllers
             }
             var events = _eventService.GetAllPaginated(offset, limit, date, country, price, parking, rating, freeTicket);
             return Ok(events);
+        }
+
+        // GET: api/Events/SaveAsPDF?offset=0&limit=6
+        [HttpGet("[action]")]
+        public FileContentResult SaveAsPDF([FromQuery] int offset = 0, [FromQuery] int limit = 6, [FromQuery] string date = "", [FromQuery] string country = "", [FromQuery] int price = 0, [FromQuery] int parking = 0, [FromQuery] int rating = 0, [FromQuery] int freeTicket = 0)
+        {
+            if (limit > 6)
+            {
+                limit = 6;
+            }
+            var events = _eventService.GetAllPaginated(offset, limit, date, country, price, parking, rating, freeTicket);
+
+            var template = DocumentModel.Load("Templates/Invoice.docx");
+
+            var combinedDocument = new DocumentModel();
+
+            //take the first event because GemBox free version only allows 20 paragraphs
+            Event e = events.First();
+
+            var document = template.Clone(true);
+
+            document.Content.Replace("{Title}", e.Title);
+            document.Content.Replace("{Country}", e.Country);
+            document.Content.Replace("{Address}", e.Address);
+            document.Content.Replace("{Rating}", e.Rating?.ToString());
+            document.Content.Replace("{Capacity}", e.Capacity?.ToString());
+            document.Content.Replace("{Parking}", e.Parking?.ToString());
+            document.Content.Replace("{Date}", e.Date?.ToString("d"));
+            document.Content.Replace("{StartTime}", e.StartTime?.ToString());
+            document.Content.Replace("{EndTime}", e.EndTime?.ToString());
+            document.Content.Replace("{GateOpenTime}", e.GateOpenTime?.ToString());
+            document.Content.Replace("{ReservationCloseTime}", e.ReservationCloseTime?.ToString());
+            document.Content.Replace("{Price}", e.Price?.ToString());
+            document.Content.Replace("{Label}", e.Label);
+
+            foreach (var section in document.Sections)
+            {
+                var importedSection = combinedDocument.Import(section, true);
+                combinedDocument.Sections.Add(importedSection);
+            }
+
+
+            var stream = new MemoryStream();
+
+            document.Save(stream, new PdfSaveOptions());
+
+            return File(stream.ToArray(), new PdfSaveOptions().ContentType, "Events.pdf");
         }
 
         // GET: api/Events/GetEvent/{id}
