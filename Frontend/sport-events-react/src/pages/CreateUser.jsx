@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import styles from "../css/CreateUser.module.css"
+import { NavLink } from 'react-router-dom';
 
 const CreateUser = () => {
     const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
@@ -11,9 +12,30 @@ const CreateUser = () => {
         Password: ''
     });
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [isAdmin, setIsAdmin] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/User/is-admin`, {
+            credentials: 'include',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to fetch admin status');
+            })
+            .then((data) => {
+                console.log(data)
+                setIsAdmin(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching admin status:', error);
+                setIsAdmin(null);
+            });
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,11 +51,12 @@ const CreateUser = () => {
         setError('');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/User/CreateUser`, {
+            const response = await fetch( isAdmin ? `${API_BASE_URL}/api/User/CreateAdmin` : `${API_BASE_URL}/api/User/CreateUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(formData)
             });
 
@@ -51,56 +74,55 @@ const CreateUser = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc' }}>
-            <h2>Create User</h2>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className={styles.outerContainer}>
+            <div className={styles.registerContainer}>
+                <h2 style={{ textAlign: "center" }}>Register</h2>
+                <hr style={{ margin: "25px 20%" }} />
 
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '10px' }}>
-                    <label>
-                        Username:
+                {message && <p style={{ color: 'green' }}>{message}</p>}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '10px' }}>
                         <input
                             type="text"
                             name="UserName"
+                            placeholder='Username'
                             value={formData.UserName}
                             onChange={handleChange}
                             required
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                            className={styles.inputField}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: '10px' }}>
-                    <label>
-                        Email:
+                    <div style={{ marginBottom: '10px' }}>
                         <input
                             type="email"
                             name="Email"
+                            placeholder='Email'
                             value={formData.Email}
                             onChange={handleChange}
                             required
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                            className={styles.inputField}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: '10px' }}>
-                    <label>
-                        Password:
+                    <div style={{ marginBottom: '10px' }}>
                         <input
                             type="password"
                             name="Password"
+                            placeholder='Password'
                             value={formData.Password}
                             onChange={handleChange}
                             required
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                            className={styles.inputField}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <button type="submit" style={{ padding: '10px 15px', cursor: 'pointer' }}>Create User</button>
-            </form>
+                    <button type="submit" className={styles.registerButton}>REGISTER</button>
+                </form>
+                <p style={{textAlign: "center"}}>Have an account? <NavLink to={"/user/login"}>Log In</NavLink></p>
+            </div>
         </div>
     );
 };

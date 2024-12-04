@@ -47,7 +47,7 @@ function Navbar() {
             if (response.ok) {
                 setUsername(null);
                 setLoggedIn(false);
-                navigate('/matches');
+                navigate('/user/login');
             } else {
                 console.error("Logout failed");
             }

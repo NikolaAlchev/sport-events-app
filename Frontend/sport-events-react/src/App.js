@@ -20,9 +20,11 @@ import Footer from "./components/Footer";
 function App() {
   const location = useLocation();
 
+  const hiddenPaths = ['/user/login', '/user/register'];
+
   return (
     <div>
-      {location.pathname !== '/user/login' && <Navbar />}
+      {!hiddenPaths.includes(location.pathname) && <Navbar />}
 
       <main className="main-content" style={{minHeight : "100vh"}}>
         <Routes>
@@ -42,7 +44,7 @@ function App() {
         </Routes>
       </main>
 
-      {location.pathname !== '/user/login' && <Footer />}
+      {!hiddenPaths.includes(location.pathname) && <Footer />}
     </div>
   );
 }

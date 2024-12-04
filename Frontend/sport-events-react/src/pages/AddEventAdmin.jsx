@@ -44,19 +44,27 @@ const AddEventAdmin = () => {
     const checkAuthentication = () => {
         fetch(`${API_BASE_URL}/api/user/is-admin`, {
             method: 'GET',
-            credentials: 'include'
+            credentials: 'include',
         })
-            .then(response => {
+            .then((response) => {
                 if (response.ok) {
-                    if (!response.body) {
-                        navigate('/user/login');
-                    }
+                    return response.json();
                 } else if (response.status === 401) {
-
+                    navigate('/user/login');
+                    return null;
+                } else {
+                    throw new Error('Unexpected response status');
+                }
+            })
+            .then((data) => {
+                if (data === null || !data) {
                     navigate('/user/login');
                 }
             })
-            .catch(() => navigate('/user/login'));
+            .catch((error) => {
+                console.error('Error during authentication check:', error);
+                navigate('/user/login');
+            });
     };
 
     const [eventData, setEventData] = useState({

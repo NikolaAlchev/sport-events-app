@@ -59,15 +59,20 @@ function Events() {
 
     useEffect(() => {
         fetch(`${API_BASE_URL}/api/User/is-admin`, {
-            credentials: 'include'
+            credentials: 'include',
         })
             .then((response) => {
                 if (response.ok) {
-                    setIsAdmin(response.body);
+                    return response.json();
                 }
+                throw new Error('Failed to fetch admin status');
+            })
+            .then((data) => {
+                console.log(data);
+                setIsAdmin(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.error('Error fetching admin status:', error);
             });
     }, []);
 

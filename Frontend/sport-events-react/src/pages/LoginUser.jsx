@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import style from "../css/Login.module.css"
-
+import styles from "../css/Login.module.css"
+import { NavLink } from 'react-router-dom';
 
 function LoginUser() {
     const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
@@ -52,8 +52,8 @@ function LoginUser() {
     };
 
     return (
-        <div className={style.outerContainer}>
-            <div className={style.loginContainer}>
+        <div className={styles.outerContainer}>
+            <div className={styles.loginContainer}>
                 <h2 style={{ textAlign: "center" }}>Login</h2>
                 <hr style={{ margin: "25px 20%" }} />
 
@@ -69,7 +69,7 @@ function LoginUser() {
                             value={formData.Email}
                             onChange={handleChange}
                             required
-                            className={style.inputField}
+                            className={styles.inputField}
                         />
                     </div>
 
@@ -81,12 +81,13 @@ function LoginUser() {
                             value={formData.Password}
                             onChange={handleChange}
                             required
-                            className={style.inputField}
+                            className={styles.inputField}
                         />
                     </div>
 
-                    <button type="submit" className={style.loginButton}>LOGIN</button>
+                    <button type="submit" className={styles.loginButton}>LOGIN</button>
                 </form>
+                <p style={{textAlign: "center"}}>Don't have an account yet? <NavLink to={"/user/register"}>Create a new account</NavLink></p>
             </div>
         </div>
     );

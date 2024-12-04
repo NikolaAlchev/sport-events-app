@@ -22,7 +22,7 @@ namespace EventsApp.Controllers
         {
             _userManager = userManager;
             _configuration = configuration;
-      
+
         }
 
         // GET: api/User/GetAllUsers
@@ -59,7 +59,7 @@ namespace EventsApp.Controllers
             if (result.Succeeded)
             {
 
-                var roleResult = await _userManager.AddToRoleAsync( user, "User");
+                var roleResult = await _userManager.AddToRoleAsync(user, "User");
                 if (!roleResult.Succeeded)
                 {
                     return BadRequest(roleResult.Errors);
@@ -73,19 +73,24 @@ namespace EventsApp.Controllers
 
         // POST: api/User/CreateAdmin
         [HttpPost("[action]")]
-        [Authorize (Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CreateAdmin([FromBody] CreateUserDto model)
         {
-            var user = new IdentityUser
+            var user = new EventsAppUser
             {
                 UserName = model.UserName,
                 Email = model.Email
             };
 
-            var result = await _userManager.CreateAsync((EventsAppUser) user, model.Password);
+            var result = await _userManager.CreateAsync((EventsAppUser)user, model.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
             if (result.Succeeded)
             {
-                var roleResult = await _userManager.AddToRoleAsync((EventsAppUser) user, "Admin");
+                var roleResult = await _userManager.AddToRoleAsync((EventsAppUser)user, "Admin");
                 if (!roleResult.Succeeded)
                 {
                     return BadRequest(roleResult.Errors);
@@ -96,6 +101,7 @@ namespace EventsApp.Controllers
 
             return BadRequest(result.Errors);
         }
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
@@ -159,7 +165,7 @@ namespace EventsApp.Controllers
 
                 if (isValid)
                 {
-               
+
                     return Ok(User.FindFirst(ClaimTypes.Name)?.Value);
                 }
             }
@@ -179,9 +185,14 @@ namespace EventsApp.Controllers
 
                 if (isValid)
                 {
-                    return Ok(User.FindFirst(ClaimTypes.Role)?.Value == "Admin");
-       
-    
+                    var roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value);
+                    if (roles.Contains("Admin"))
+                    {
+                        return Ok(true);
+                    }
+
+                    return Ok(false);
+
                 }
             }
 
@@ -238,50 +249,6 @@ namespace EventsApp.Controllers
             return Ok(new { message = "Logged out successfully" });
         }
 
-
-
-
     }
 
-/*    // PUT: api/User/UpdateUser/{id}
-    [HttpPut("[action]/{id}")]
-        public async Task<ActionResult> UpdateUser(string id, [FromBody] UpdateUserDto model)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.UserName = model.UserName ?? user.UserName;
-            user.Email = model.Email ?? user.Email;
-
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                return Ok(user);
-            }
-
-            return BadRequest(result.Errors);
-        }
-
-        // DELETE: api/User/DeleteUser/{id}
-        [HttpDelete("[action]/{id}")]
-        public async Task<ActionResult> DeleteUser(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-
-            return BadRequest(result.Errors);
-        }
-    }*/
 }
