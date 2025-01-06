@@ -50,8 +50,6 @@ namespace Repository.Implementation
 
                             CurrentSeasonStartDate = DateOnly.FromDateTime(comp.GetProperty("currentSeason").GetProperty("startDate").GetDateTime()),
                             CurrentSeasonEndDate = DateOnly.FromDateTime(comp.GetProperty("currentSeason").GetProperty("endDate").GetDateTime()),
-
-                            CurrentMatchDay = comp.GetProperty("currentSeason").GetProperty("currentMatchday").GetInt32()
                         };
 
                         list.Add(DTO);   

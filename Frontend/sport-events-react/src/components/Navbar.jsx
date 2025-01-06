@@ -75,6 +75,10 @@ function Navbar() {
                     <NavLink to="/player" className="navbar-links">
                         <p>Players</p>
                     </NavLink>
+
+                    <NavLink to="/question" className="navbar-links">
+                        <p>Questions</p>
+                    </NavLink>
                 </div>
                 {username ? 
                     <div id="username-container">

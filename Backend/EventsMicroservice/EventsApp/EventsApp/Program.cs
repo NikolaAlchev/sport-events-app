@@ -18,9 +18,16 @@ var config = builder.Configuration;
 // Add services to the container.
 var connectionString = config.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+var connectionString2 = config.GetConnectionString("SecondAppConnection")
+    ?? throw new InvalidOperationException("Connection string 'SecondAppConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddDbContext<QApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString2));
 
 builder.Services.AddDefaultIdentity<EventsAppUser>()
     .AddRoles<IdentityRole>()
@@ -30,7 +37,8 @@ builder.Services.AddDefaultIdentity<EventsAppUser>()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", builder => builder
-        .WithOrigins("http://localhost:3000") // Add your frontend URL here
+        .WithOrigins("https://eventsappreact-haewcahuf3cqhwae.northeurope-01.azurewebsites.net")
+        //.WithOrigins("http://localhost:3000")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()); // Allow credentials (cookies)
@@ -140,6 +148,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IEventsRepository, EventRepository>();
 builder.Services.AddScoped<IEventUserRepository, EventUserRepository>();
 builder.Services.AddTransient<IEventService, EventService>();
+
+builder.Services.AddScoped<IQuestionAppRepository, QuestionAppRepository>();
 
 builder.Services.AddControllersWithViews();
 

@@ -7,6 +7,7 @@ import { Row, Col, Container, Button, Form } from 'react-bootstrap';
 import ImageBanner from "../components/ImageBanner";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import bannerImage from "../assets/stadium.jpg";
 
 function Events() {
     const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
@@ -23,8 +24,7 @@ function Events() {
     const [starRating, setStarRating] = useState(0);
     const [isAdmin, setIsAdmin] = useState(false);
     const limit = 6;
-    const imageUrl = "https://s3-alpha-sig.figma.com/img/8e87/f396/5bb6cdd58fdccad48a4414e14405c76c?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eRVakKFgZIPVcp30mNhANzbJy0-078oqPBX1ybO1wlZ94CmEy9BJYYEpUB7Gb7R54gZseZPr9somaxxkOzCzJGPv5csokoktnGwa5mNPLhQ-WOXuzxsJzoIHKFrDYHx9h~e5apzM7doGc3nGBwdSFwlduEC1GMg4J8WyIlsSGhS6i~8cHyvdwmewB8Csa1AgCcsRBOB9q5wkVBR1FtgSYotbxjnKX9m-8q7KS29OFpzeChEKej-ILHVc4XUFfBvV8KLWftM7stcTv4TgF~NRGlaokdPvM4eKBztitygxw7lxzSyUYwD6~QoHZL2SscckJlr~FJhdkSupdiaTm-Ezsw__";
-
+    
     const navigate = useNavigate();
 
     function getTodayDate() {
@@ -149,7 +149,7 @@ function Events() {
 
     return (
         <div id="events-content">
-            <ImageBanner image={imageUrl}></ImageBanner>
+            <ImageBanner image={bannerImage} title={"Find, Choose, Attend!"}></ImageBanner>
             <div id="events-bottom-container">
                 {isAdmin ?
                     <div id="add-event-container">
