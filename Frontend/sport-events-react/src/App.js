@@ -16,6 +16,7 @@ import LoginUser from "./pages/LoginUser";
 import AddEventAdmin from './pages/AddEventAdmin';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Question from "./pages/Question";
 
 function App() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/user/register" element={<CreateUser />} />
           <Route path="/user/login" element={<LoginUser />} />
           <Route path="/admin/event/add" element={<AddEventAdmin />} />
+          <Route path="/question" element={<Question />} />
         </Routes>
       </main>
 

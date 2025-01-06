@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import "../css/AddEventAdmin.css";
 import ImageBanner from "../components/ImageBanner";
 import BackButton from '../components/BackButton';
+import bannerImage from "../assets/football.jpeg";
 
 const AddEventAdmin = () => {
     const API_BASE_URL = process.env.REACT_APP_EVENTS_API_BASE_URL;
@@ -13,8 +14,6 @@ const AddEventAdmin = () => {
 
     const initialData = location.state?.initialData;
     const isEditMode = !!initialData;
-
-    const imageUrl = "https://c4.wallpaperflare.com/wallpaper/971/967/737/sports-images-for-desktop-background-wallpaper-preview.jpg";
 
     useEffect(() => {
         checkAuthentication();
@@ -218,7 +217,7 @@ const AddEventAdmin = () => {
 
     return (
         <div id="add-event-content">
-            <ImageBanner image={imageUrl} title={isEditMode ? "Edit Event" : "Add Event"}></ImageBanner>
+            <ImageBanner image={bannerImage} title={isEditMode ? "Edit Event" : "Add Event"}></ImageBanner>
             <BackButton />
             <div id="add-event-bottom-container">
                 <Container>
