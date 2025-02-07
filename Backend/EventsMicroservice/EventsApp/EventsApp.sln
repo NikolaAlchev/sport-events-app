@@ -16,6 +16,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsApp.Tests", "EventsApp.Tests\EventsApp.Tests.csproj", "{BAE8D0F5-5A6A-4938-A721-1D2B1484FEA5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7E9FDCE5-379B-4043-9DC8-51FB1534153C} = {7E9FDCE5-379B-4043-9DC8-51FB1534153C}
+		{9608FB2C-699F-4725-A392-CF44BD7D67A3} = {9608FB2C-699F-4725-A392-CF44BD7D67A3}
+		{CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2} = {CCA2AC07-8ECF-4BE1-B969-B15F7EBC0AC2}
+		{CE7CC79A-0E9A-4934-92A9-0302C75CC6FB} = {CE7CC79A-0E9A-4934-92A9-0302C75CC6FB}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +46,10 @@ Global
 		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E9FDCE5-379B-4043-9DC8-51FB1534153C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAE8D0F5-5A6A-4938-A721-1D2B1484FEA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAE8D0F5-5A6A-4938-A721-1D2B1484FEA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAE8D0F5-5A6A-4938-A721-1D2B1484FEA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAE8D0F5-5A6A-4938-A721-1D2B1484FEA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
