@@ -53,6 +53,11 @@ namespace EventsApp.Controllers
             }
             var events = _eventService.GetAllPaginated(offset, limit, date, country, price, parking, rating, freeTicket);
 
+            if (!events.Any())
+            {
+                throw new InvalidOperationException("No events found for the given filters.");
+            }
+
             var template = DocumentModel.Load("Templates/Invoice.docx");
 
             var combinedDocument = new DocumentModel();

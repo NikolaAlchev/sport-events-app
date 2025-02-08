@@ -33,18 +33,6 @@ namespace EventsApp.Controllers
             return Ok(users);
         }
 
-        /*        // GET: api/User/GetUser/{id}
-                [HttpGet("[action]/{id}")]
-                public ActionResult<EventsAppUser> GetUser(string id)
-                {
-                    var user = _userManager.FindByIdAsync(id);
-                    if (user == null)
-                    {
-                        return NotFound();
-                    }
-                    return Ok(user);
-                }*/
-
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<EventsAppUser>> GetUser(string id)
         {

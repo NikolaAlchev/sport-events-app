@@ -46,6 +46,10 @@ namespace Service.Implementation
 
         public Event UpdateEvent(Event e)
         {
+            if (e == null)
+            {
+                throw new ArgumentNullException("Event is null");
+            }
             return _eventRepository.Update(e);
         }
 
@@ -61,7 +65,7 @@ namespace Service.Implementation
 
         public EventUser reserveSeatForUserOnEvent(string UserId, Guid EventId)
         {
-            var sportsEvent = _eventsRepository.GetEventWithUsers(EventId);
+            var sportsEvent = _eventRepository.Get(EventId);
             var userIds = _eventUserRepository.getUsersFromEvent(EventId);
 
             DateTime resDate = sportsEvent.Date.Value;
@@ -84,8 +88,7 @@ namespace Service.Implementation
                     throw new ArgumentException("Cannot reserve a seat. The event reservation has already ended.");
                 }
             }
-            List<EventUser> eventUsers = sportsEvent.Users.ToList();
-            if (eventUsers.Count() == sportsEvent.Capacity.Value)
+            if (userIds.Count() == sportsEvent.Capacity.Value)
             {
                 throw new ApplicationException("No seats available, the event is booked");
 

@@ -1,12 +1,8 @@
-﻿using Moq;
-using Xunit;
-using EventsApp.Controllers;
-using Repository.Interface;
+﻿using Domain.DTO;
 using Domain.SecondAppModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.DTO;
+using EventsApp.Controllers;
+using Moq;
+using Repository.Interface;
 
 public class QuestionsControllerTests
 {
@@ -23,13 +19,15 @@ public class QuestionsControllerTests
     public void Index_ValidData_ReturnsUserQuestionsDTOList()
     {
         // Arrange
+        var databaseId = Guid.NewGuid();
+
         var questions = new List<Questions>
         {
-            new Questions { DatabaseId = Guid.NewGuid(), QuestionText = "Question 1", QuestionAnswer = "Answer 1" }
+            new Questions { DatabaseId = databaseId, QuestionText = "Question 1", QuestionAnswer = "Answer 1" }
         };
         var databases = new List<Databases>
         {
-            new Databases { Id = Guid.NewGuid(), OwnerId = "Owner1" }
+            new Databases { Id = databaseId, OwnerId = "Owner1" }
         };
         var users = new List<Users>
         {
@@ -45,11 +43,12 @@ public class QuestionsControllerTests
 
         // Assert
         var userQuestions = Assert.IsType<List<UserQuestionsDTO>>(result);
-        Assert.Single(userQuestions); // We have only one question in the test data
+        Assert.Single(userQuestions);
         Assert.Equal("User1", userQuestions[0].UserName);
         Assert.Equal("Question 1", userQuestions[0].QuestionText);
         Assert.Equal("Answer 1", userQuestions[0].QuestionAnswer);
     }
+
 
     [Fact]
     public void Index_TablesAreEmpty_ThrowsException()

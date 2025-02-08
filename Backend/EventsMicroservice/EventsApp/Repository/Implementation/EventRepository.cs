@@ -18,16 +18,6 @@ namespace Repository.Implementation
             _context = context;
         }
 
-
-        public Event GetEventWithUsers(Guid eventId)
-        {
-
-            return _context.Events
-                .Where(i => i.Id.Equals(eventId)).FirstOrDefault();
-
-        }
-
-
         public List<Event> GetAllFiltered(int offset, int limit, string date, string country, int price, int parking, int rating, int freeTicket)
         {
             //fix price filter 

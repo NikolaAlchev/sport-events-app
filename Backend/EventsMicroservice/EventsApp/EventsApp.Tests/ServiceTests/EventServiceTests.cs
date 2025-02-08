@@ -1,16 +1,10 @@
-﻿using Moq;
-using Xunit;
-using Service.Implementation;
+﻿using ClosedXML.Excel;
 using Domain.Model;
-using Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
 using FluentAssertions;
-using Domain.DTO;
-using System.IO;
-using ClosedXML.Excel;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using Repository.Interface;
+using Service.Implementation;
 
 public class EventServiceTests
 {
@@ -21,6 +15,8 @@ public class EventServiceTests
 
     public EventServiceTests()
     {
+        // ComponentInfo.SetLicense("FREE-LIMITED-KEY");
+
         _mockEventRepository = new Mock<IRepository<Event>>();
         _mockEventsRepository = new Mock<IEventsRepository>();
         _mockEventUserRepository = new Mock<IEventUserRepository>();
@@ -64,6 +60,61 @@ public class EventServiceTests
     }
 
     [Fact]
+    public void DeleteEvent_NonExistentId_ReturnsNull()
+    {
+        // Arrange
+        var eventId = Guid.NewGuid();
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns((Event)null);
+
+        // Act
+        var result = _eventService.DeleteEvent(eventId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void GetEvent_ValidId_ReturnsEvent()
+    {
+        // Arrange
+        var eventId = Guid.NewGuid();
+        var expectedEvent = new Event { Id = eventId, Title = "Test Event" };
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(expectedEvent);
+
+        // Act
+        var result = _eventService.GetEvent(eventId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedEvent.Id, result.Id);
+        Assert.Equal(expectedEvent.Title, result.Title);
+    }
+
+    [Fact]
+    public void GetEvent_NullId_ReturnsNull()
+    {
+        // Act
+        var result = _eventService.GetEvent(null);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void GetEvent_NonExistentId_ReturnsNull()
+    {
+        // Arrange
+        var eventId = Guid.NewGuid();
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns((Event)null);
+
+        // Act
+        var result = _eventService.GetEvent(eventId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
     public void GetAll_ShouldReturnAllEvents()
     {
         // Arrange
@@ -78,23 +129,107 @@ public class EventServiceTests
     }
 
     [Fact]
+    public void UpdateEvent_ValidEvent_ReturnsUpdatedEvent()
+    {
+        // Arrange
+        var eventToUpdate = new Event { Id = Guid.NewGuid(), Title = "Updated Event" };
+        _mockEventRepository.Setup(repo => repo.Update(eventToUpdate)).Returns(eventToUpdate);
+
+        // Act
+        var result = _eventService.UpdateEvent(eventToUpdate);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(eventToUpdate.Id, result.Id);
+        Assert.Equal(eventToUpdate.Title, result.Title);
+    }
+
+    [Fact]
+    public void UpdateEvent_NullEvent_ThrowsArgumentNullException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => _eventService.UpdateEvent(null));
+    }
+
+    [Fact]
+    public void GetAllPaginated_ValidParameters_ReturnsEventsList()
+    {
+        // Arrange
+        int offset = 0, limit = 2;
+        var events = new List<Event>
+        {
+            new Event { Id = Guid.NewGuid(), Title = "Event 1" },
+            new Event { Id = Guid.NewGuid(), Title = "Event 2" }
+        };
+        _mockEventRepository.Setup(repo => repo.GetAllPaginated(offset, limit)).Returns(events);
+
+        // Act
+        var result = _eventService.GetAllPaginated(offset, limit);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(events[0].Id, result[0].Id);
+        Assert.Equal(events[1].Id, result[1].Id);
+    }
+
+    [Fact]
+    public void GetAllPaginated_NoEvents_ReturnsEmptyList()
+    {
+        // Arrange
+        _mockEventRepository.Setup(repo => repo.GetAllPaginated(It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Event>());
+
+        // Act
+        var result = _eventService.GetAllPaginated(0, 2);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void GetAllPaginated_WithFilters_ReturnsFilteredEvents()
+    {
+        // Arrange
+        int offset = 0, limit = 2, price = 50, parking = 1, rating = 4, freeTicket = 0;
+        string date = "2024-08-01", country = "USA";
+        var events = new List<Event>
+        {
+            new Event { Id = Guid.NewGuid(), Title = "Event 1" },
+            new Event { Id = Guid.NewGuid(), Title = "Event 2" }
+        };
+        _mockEventsRepository.Setup(repo => repo.GetAllFiltered(offset, limit, date, country, price, parking, rating, freeTicket)).Returns(events);
+
+        // Act
+        var result = _eventService.GetAllPaginated(offset, limit, date, country, price, parking, rating, freeTicket);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(events[0].Id, result[0].Id);
+        Assert.Equal(events[1].Id, result[1].Id);
+    }
+
+
+    [Fact]
     public void ReserveSeatForUserOnEvent_ShouldThrowException_WhenEventHasEnded()
     {
         // Arrange
         var eventId = Guid.NewGuid();
         var userId = "user123";
-        var pastDate = DateTime.Now.AddDays(-1);
+        var pastDate = DateTime.Now.AddDays(-1).Date;
 
         var sportsEvent = new Event
         {
             Id = eventId,
             Date = pastDate,
             ReservationCloseTime = new TimeOnly(23, 59),
-            Capacity = 10,
-            Users = new List<EventUser>()
+            Capacity = 10
         };
 
-        _mockEventsRepository.Setup(repo => repo.GetEventWithUsers(eventId)).Returns(sportsEvent);
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(sportsEvent);
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId))
+            .Returns(new List<string>());
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -110,18 +245,19 @@ public class EventServiceTests
         var eventId = Guid.NewGuid();
         var userId = "user123";
         var today = DateTime.Now.Date;
-        var pastTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(-1)); // Reservation closed an hour ago
+        var pastTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(-1));
 
         var sportsEvent = new Event
         {
             Id = eventId,
             Date = today,
             ReservationCloseTime = pastTime,
-            Capacity = 10,
-            Users = new List<EventUser>()
+            Capacity = 10
         };
 
-        _mockEventsRepository.Setup(repo => repo.GetEventWithUsers(eventId)).Returns(sportsEvent);
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(sportsEvent);
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId))
+            .Returns(new List<string>());
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -136,23 +272,20 @@ public class EventServiceTests
         // Arrange
         var eventId = Guid.NewGuid();
         var userId = "user123";
-        var today = DateTime.Now.Date;
-        var futureTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(2)); // Still open for reservations
+        var tomorrow = DateTime.Now.Date.AddDays(1);
+        var reservationCloseTime = new TimeOnly(23, 59);
 
         var sportsEvent = new Event
         {
             Id = eventId,
-            Date = today,
-            ReservationCloseTime = futureTime,
-            Capacity = 2, // Event capacity is full
-            Users = new List<EventUser>
-                {
-                    new EventUser { UserId = "user1", EventId = eventId },
-                    new EventUser { UserId = "user2", EventId = eventId }
-                }
+            Date = tomorrow,
+            ReservationCloseTime = reservationCloseTime,
+            Capacity = 2
         };
 
-        _mockEventsRepository.Setup(repo => repo.GetEventWithUsers(eventId)).Returns(sportsEvent);
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(sportsEvent);
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId))
+            .Returns(new List<string> { "user1", "user2" });
 
         // Act & Assert
         var exception = Assert.Throws<ApplicationException>(() =>
@@ -167,23 +300,20 @@ public class EventServiceTests
         // Arrange
         var eventId = Guid.NewGuid();
         var userId = "user123";
-        var today = DateTime.Now.Date;
-        var futureTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(2));
+        var tomorrow = DateTime.Now.Date.AddDays(1);
+        var anyTime = new TimeOnly(12, 0);
 
         var sportsEvent = new Event
         {
             Id = eventId,
-            Date = today,
-            ReservationCloseTime = futureTime,
-            Capacity = 10,
-            Users = new List<EventUser>
-                {
-                    new EventUser { UserId = userId, EventId = eventId } // User already reserved
-                }
+            Date = tomorrow,
+            ReservationCloseTime = anyTime,
+            Capacity = 10
         };
 
-        _mockEventsRepository.Setup(repo => repo.GetEventWithUsers(eventId)).Returns(sportsEvent);
-        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId)).Returns(new List<string> { userId });
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(sportsEvent);
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId))
+            .Returns(new List<string> { userId });
 
         // Act & Assert
         var exception = Assert.Throws<AccessViolationException>(() =>
@@ -198,23 +328,24 @@ public class EventServiceTests
         // Arrange
         var eventId = Guid.NewGuid();
         var userId = "user123";
-        var today = DateTime.Now.Date;
-        var futureTime = TimeOnly.FromDateTime(DateTime.Now.AddHours(2));
+        var tomorrow = DateTime.Now.Date.AddDays(1);
+        var anyTime = new TimeOnly(12, 0);
 
         var sportsEvent = new Event
         {
             Id = eventId,
-            Date = today,
-            ReservationCloseTime = futureTime,
-            Capacity = 10,
-            Users = new List<EventUser>()
+            Date = tomorrow,
+            ReservationCloseTime = anyTime,
+            Capacity = 10
         };
 
         var newEventUser = new EventUser { UserId = userId, EventId = eventId };
 
-        _mockEventsRepository.Setup(repo => repo.GetEventWithUsers(eventId)).Returns(sportsEvent);
-        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId)).Returns(new List<string>());
-        _mockEventUserRepository.Setup(repo => repo.AddEventUser(userId, eventId)).Returns(newEventUser);
+        _mockEventRepository.Setup(repo => repo.Get(eventId)).Returns(sportsEvent);
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId))
+            .Returns(new List<string>());
+        _mockEventUserRepository.Setup(repo => repo.AddEventUser(userId, eventId))
+            .Returns(newEventUser);
 
         // Act
         var result = _eventService.reserveSeatForUserOnEvent(userId, eventId);
@@ -241,24 +372,50 @@ public class EventServiceTests
         result.IsRegistered.Should().Be("true");
     }
 
-    /*    [Fact]
-        public void ParseEventFromExcel_ShouldReturnEvent_WhenFileIsValid()
-        {
-            // Arrange
-            var fileMock = new Mock<IFormFile>();
-            var filePath = "testfile.xlsx";
-            var stream = new MemoryStream(File.ReadAllBytes(filePath));
-            fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
-            fileMock.Setup(f => f.FileName).Returns(filePath);
-            fileMock.Setup(f => f.Length).Returns(stream.Length);
+    [Fact]
+    public void CheckReservationForEvent_ShouldReturnFalse_WhenUserIsNotRegistered()
+    {
+        // Arrange
+        var eventId = Guid.NewGuid();
+        var userId = "user1";
+        var userList = new List<string> { "anotherUser" };
+        _mockEventUserRepository.Setup(repo => repo.getUsersFromEvent(eventId)).Returns(userList);
 
-            // Act
-            var result = _eventService.ParseEventFromExcel(fileMock.Object);
+        // Act
+        var result = _eventService.checkReservationForEvent(eventId, userId);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Title.Should().Be("Test Event");
-        }*/
+        // Assert
+        result.IsRegistered.Should().Be("false");
+    }
+
+    [Fact]
+    public void ParseEventFromExcel_ShouldReturnEvent_WhenFileIsValid()
+    {
+        // Arrange
+        var file = CreateMockExcelFile();
+
+        // Act
+        var result = _eventService.ParseEventFromExcel(file);
+
+        // Assert
+        result.Should().NotBeNull();
+
+        result.Title.Should().Be("Football Match");
+        result.Country.Should().Be("USA");
+        result.Address.Should().Be("123 Stadium Road");
+        result.Rating.Should().Be(4.5f);
+        result.Capacity.Should().Be(50000);
+        result.Parking.Should().BeTrue();
+        result.ImageUrl.Should().Be("https://example.com/image.jpg");
+        result.Date.Should().Be(new DateTime(2025, 5, 10));
+        result.StartTime.Should().Be(new TimeOnly(19, 0));
+        result.EndTime.Should().Be(new TimeOnly(22, 0));
+        result.GateOpenTime.Should().Be(new TimeOnly(17, 30));
+        result.ReservationCloseTime.Should().Be(new TimeOnly(18, 30));
+        result.Price.Should().Be(100);
+        result.Label.Should().Be("Sports");
+        result.Description.Should().Be("Exciting football match!");
+    }
 
     [Fact]
     public void ParseEventFromExcel_ShouldThrowException_WhenFileIsNull()
@@ -317,7 +474,7 @@ public class EventServiceTests
         var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Sheet1");
 
-        // Creating Header Row
+        // Headers
         string[] headers = { "Title", "Country", "Address", "Rating", "Capacity", "Parking", "ImageUrl",
                          "Date", "StartTime", "EndTime", "GateOpenTime", "ReservationCloseTime",
                          "Price", "Label", "Description" };
@@ -327,28 +484,32 @@ public class EventServiceTests
             worksheet.Cell(1, i + 1).Value = headers[i];
         }
 
-        // Creating Data Row
-        string[] data = { "Football Match", "USA", "123 Stadium Road", "4.5", "50000", "true",
-                      "https://example.com/image.jpg", "2025-05-10", "19:00", "22:00", "17:30",
-                      "18:30", "100", "Sports", "Exciting football match!" };
-
-        for (int i = 0; i < data.Length; i++)
-        {
-            worksheet.Cell(2, i + 1).Value = data[i];
-        }
+        worksheet.Cell(2, 1).Value = "Football Match";
+        worksheet.Cell(2, 2).Value = "USA";
+        worksheet.Cell(2, 3).Value = "123 Stadium Road";
+        worksheet.Cell(2, 4).Value = 4.5;
+        worksheet.Cell(2, 5).Value = 50000;
+        worksheet.Cell(2, 6).Value = true;
+        worksheet.Cell(2, 7).Value = "https://example.com/image.jpg";
+        worksheet.Cell(2, 8).Value = new DateTime(2025, 5, 10);
+        worksheet.Cell(2, 9).Value = TimeSpan.Parse("19:00");
+        worksheet.Cell(2, 10).Value = TimeSpan.Parse("22:00");
+        worksheet.Cell(2, 11).Value = TimeSpan.Parse("17:30");
+        worksheet.Cell(2, 12).Value = TimeSpan.Parse("18:30");
+        worksheet.Cell(2, 13).Value = 100;
+        worksheet.Cell(2, 14).Value = "Sports";
+        worksheet.Cell(2, 15).Value = "Exciting football match!";
 
         var memoryStream = new MemoryStream();
         workbook.SaveAs(memoryStream);
         memoryStream.Position = 0;
 
         var mockFile = new Mock<IFormFile>();
-        mockFile.Setup(f => f.OpenReadStream()).Returns(() => new MemoryStream(memoryStream.ToArray())); // NEW: Return a fresh stream
+        mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream);
         mockFile.Setup(f => f.Length).Returns(memoryStream.Length);
-        mockFile.Setup(f => f.CopyTo(It.IsAny<Stream>())).Callback<Stream>(s =>
-        {
-            var freshStream = new MemoryStream(memoryStream.ToArray());
-            freshStream.CopyTo(s);
-        });
+        mockFile.Setup(f => f.FileName).Returns("test.xlsx");
+        mockFile.Setup(f => f.CopyTo(It.IsAny<Stream>()))
+            .Callback<Stream>(s => memoryStream.CopyTo(s));
 
         return mockFile.Object;
     }

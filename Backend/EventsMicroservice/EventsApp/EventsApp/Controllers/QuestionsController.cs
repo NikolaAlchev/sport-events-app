@@ -2,8 +2,6 @@
 using Domain.SecondAppModels;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
-using Service.Implementation;
-using Service.Interface;
 
 namespace EventsApp.Controllers
 {
@@ -21,23 +19,26 @@ namespace EventsApp.Controllers
             List<Databases> databases = _questionRepository.getAllDatabases();
             List<Users> users = _questionRepository.getAllUsers();
 
-            if (questions != null && databases != null && users != null)
+            if (questions == null || questions.Count == 0 ||
+                databases == null || databases.Count == 0 ||
+                users == null || users.Count == 0)
             {
-                var userQuestions = from user in users
-                                    join db in databases on user.Id equals db.OwnerId
-                                    join question in questions on db.Id equals question.DatabaseId
-                                    select new UserQuestionsDTO
-                                    {
-                                        UserName = user.UserName,
-                                        QuestionText = question.QuestionText,
-                                        QuestionAnswer = question.QuestionAnswer
-                                    };
-
-                return userQuestions.ToList();
+                throw new Exception("Tables must not be empty");
             }
 
-            throw new Exception("Tables must not be empty");
+            // Perform the join and return the result
+            var userQuestions = from user in users
+                                join db in databases on user.Id equals db.OwnerId
+                                join question in questions on db.Id equals question.DatabaseId
+                                select new UserQuestionsDTO
+                                {
+                                    UserName = user.UserName,
+                                    QuestionText = question.QuestionText,
+                                    QuestionAnswer = question.QuestionAnswer
+                                };
 
+            return userQuestions.ToList();
         }
+
     }
 }
