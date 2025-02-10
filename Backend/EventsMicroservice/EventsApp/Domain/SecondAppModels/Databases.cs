@@ -9,6 +9,6 @@ namespace Domain.SecondAppModels
     public class Databases
     {
         public Guid Id { get; set; }
-        public string OwnerId { get; set; }
+        public string? OwnerId { get; set; }
     }
 }
