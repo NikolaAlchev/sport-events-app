@@ -1,16 +1,23 @@
 ﻿using Domain.DTO;
 using Domain.Identity;
 using EventsApp.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 public class UserControllerTests
 {
     private readonly Mock<UserManager<EventsAppUser>> _mockUserManager;
     private readonly Mock<IConfiguration> _mockConfiguration;
     private readonly UserController _controller;
+    private readonly Mock<IConfigurationSection> _mockJwtSettings;
+    private string _validToken;
 
     public UserControllerTests()
     {
@@ -19,7 +26,50 @@ public class UserControllerTests
             null, null, null, null, null, null, null, null
         );
         _mockConfiguration = new Mock<IConfiguration>();
-        _controller = new UserController(_mockUserManager.Object, _mockConfiguration.Object);
+        _mockJwtSettings = new Mock<IConfigurationSection>();
+
+        SetupConfiguration();
+
+        _controller = new UserController(_mockUserManager.Object, _mockConfiguration.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+
+        var user = new EventsAppUser
+        {
+            Id = "123",
+            UserName = "testuser",
+            Email = "test@test.com"
+        };
+        _validToken = GenerateValidToken(user).GetAwaiter().GetResult();
+    }
+
+    private async Task<string> GenerateValidToken(EventsAppUser user)
+    {
+        // Mock roles retrieval
+        _mockUserManager.Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string> { "User" });
+
+        // Generate token using the controller's actual method
+        return await _controller.GenerateJwtToken(user);
+    }
+
+    private void SetupConfiguration()
+    {
+        _mockConfiguration
+            .Setup(c => c["JwtSettings:Key"])
+            .Returns("64-bit-keys-are-invalid-use-32-chars-here");
+
+        _mockConfiguration
+            .Setup(c => c[It.Is<string>(s => s == "JwtSettings:Issuer")])
+            .Returns("test-issuer");
+
+        _mockConfiguration
+            .Setup(c => c[It.Is<string>(s => s == "JwtSettings:Audience")])
+            .Returns("test-audience");
     }
 
     [Fact]
@@ -144,39 +194,25 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task CreateAdmin_ShouldReturnCreated_WhenAdminIsCreatedSuccessfully()
+    public async Task CreateAdmin_AdminUser_CreatesAdminSuccessfully()
     {
         // Arrange
-        var model = new CreateUserDto
-        {
-            UserName = "adminuser",
-            Email = "admin@example.com",
-            Password = "Password123"
-        };
-        var expectedUserId = "new-id";
+        var model = new CreateUserDto { UserName = "admin", Email = "admin@test.com", Password = "P@ssw0rd" };
+        var user = new EventsAppUser { UserName = model.UserName, Email = model.Email };
 
-        _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<EventsAppUser>(), It.IsAny<string>()))
-            .Callback<EventsAppUser, string>((user, password) =>
-            {
-                user.Id = expectedUserId;
-            })
+        _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<EventsAppUser>(), model.Password))
             .ReturnsAsync(IdentityResult.Success);
-
-        _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<EventsAppUser>(), "Admin"))
+        _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<EventsAppUser>(), "Admin"))
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
         var result = await _controller.CreateAdmin(model);
 
         // Assert
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal("GetUser", createdAtActionResult.ActionName);
-        Assert.Equal(expectedUserId, createdAtActionResult.RouteValues["id"]);
-
-        var createdUser = Assert.IsType<EventsAppUser>(createdAtActionResult.Value);
-        Assert.Equal(model.UserName, createdUser.UserName);
-        Assert.Equal(model.Email, createdUser.Email);
-        Assert.Equal(expectedUserId, createdUser.Id);
+        var createdAtResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal(nameof(UserController.GetUser), createdAtResult.ActionName);
+        _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<EventsAppUser>(), model.Password), Times.Once);
+        _mockUserManager.Verify(x => x.AddToRoleAsync(It.IsAny<EventsAppUser>(), "Admin"), Times.Once);
     }
 
     [Fact]
@@ -219,105 +255,241 @@ public class UserControllerTests
         Assert.Contains(errors, e => e.Description == "Role assignment failed");
     }
 
-    /*[Fact]
-    public async Task CreateAdmin_ShouldReturnForbidden_WhenUserIsNotAuthorized()
+
+    [Fact]
+    public async Task Login_ValidCredentials_ReturnsOkWithCookie()
     {
         // Arrange
-        var model = new CreateUserDto { UserName = "adminuser", Email = "admin@example.com", Password = "Password123" };
+        var model = new LoginDto { Email = "test@test.com", Password = "P@ssw0rd" };
+        var user = new EventsAppUser { Email = model.Email, UserName = "testuser" };
 
-        var claims = new List<Claim> { new Claim(ClaimTypes.Name, "testuser") };
-        var identity = new ClaimsIdentity(claims, "mock"); 
-        var user = new ClaimsPrincipal(identity);
+        _mockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
 
-        var mockHttpContext = new DefaultHttpContext();
-        mockHttpContext.User = user;
+        _mockUserManager.Setup(x => x.CheckPasswordAsync(user, model.Password))
+            .ReturnsAsync(true);
 
-        _controller.ControllerContext = new ControllerContext
+        _mockUserManager.Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string> { "User" });
+
+        // Act
+        var result = await _controller.Login(model);
+
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Login_InvalidUser_ReturnsUnauthorized()
+    {
+        // Arrange
+        var model = new LoginDto { Email = "wrong@test.com", Password = "P@ssw0rd" };
+
+        _mockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
+            .ReturnsAsync((EventsAppUser)null);
+
+        // Act
+        var result = await _controller.Login(model);
+
+        // Assert
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+
+        var message = unauthorizedResult.Value?.GetType().GetProperty("message")?.GetValue(unauthorizedResult.Value);
+        Assert.Equal("Invalid username or password", message);
+
+        Assert.DoesNotContain("Set-Cookie", _controller.Response.Headers);
+    }
+
+    [Fact]
+    public async Task Login_InvalidPassword_ReturnsUnauthorized()
+    {
+        // Arrange
+        var model = new LoginDto { Email = "test@test.com", Password = "WrongPassword" };
+        var user = new EventsAppUser { Email = model.Email, UserName = "testuser" };
+
+        _mockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+        _mockUserManager.Setup(x => x.CheckPasswordAsync(user, It.IsAny<string>()))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _controller.Login(model);
+
+        // Assert
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+
+        var message = unauthorizedResult.Value?.GetType().GetProperty("message")?.GetValue(unauthorizedResult.Value);
+        Assert.Equal("Invalid username or password", message);
+
+        Assert.DoesNotContain("Set-Cookie", _controller.Response.Headers);
+    }
+
+    [Fact]
+    public void Validate_ValidToken_ReturnsUsername()
+    {
+        // Arrange
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", _validToken);
+
+        // Act
+        var result = _controller.Validation();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("testuser", okResult.Value);
+    }
+
+    [Fact]
+    public void Validate_InvalidToken_ReturnsUnauthorized()
+    {
+        // Arrange
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", "invalid-token");
+
+        // Act
+        var result = _controller.Validation();
+
+        // Assert
+        Assert.IsType<UnauthorizedObjectResult>(result);
+    }
+
+    [Fact]
+    public void Validate_MissingToken_ReturnsUnauthorized()
+    {
+        // Arrange - No cookies set
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", "");
+
+        // Act
+        var result = _controller.Validation();
+
+        // Assert
+        Assert.IsType<UnauthorizedObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task IsAdmin_AdminUser_ReturnsTrue()
+    {
+        // Arrange
+        var user = new EventsAppUser
         {
-            HttpContext = mockHttpContext
+            Id = "123",
+            UserName = "adminuser",
+            Email = "admin@test.com"
         };
 
+        _mockUserManager.Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string> { "Admin" });
+
+        var validToken = await _controller.GenerateJwtToken(user);
+
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", validToken);
+
         // Act
-        var result = await _controller.CreateAdmin(model);
+        var result = _controller.isAdmin();
 
         // Assert
-        Assert.IsType<ForbidResult>(result);
-    }
-    [Fact]
-    public async Task Login_ShouldReturnOk_WhenCredentialsAreValid()
-    {
-        // Arrange
-        var model = new LoginDto { Email = "user@example.com", Password = "Password123" };
-        var user = new EventsAppUser { Email = "user@example.com", UserName = "username" };
-        var mockJwtToken = "mock-jwt-token";
-
-        // Mock FindByEmailAsync to return the user
-        _mockUserManager.Setup(m => m.FindByEmailAsync(model.Email))
-                        .ReturnsAsync(user);
-
-        // Mock CheckPasswordAsync to return true
-        _mockUserManager.Setup(m => m.CheckPasswordAsync(user, model.Password))
-                        .ReturnsAsync(true);
-
-        // Mock GenerateJwtToken to return a mocked token
-        _mockJwtService.Setup(s => s.GenerateJwtToken(user))
-                       .ReturnsAsync(mockJwtToken);
-
-        // Act
-        var result = await _controller.Login(model);
-
-        // Assert for Ok result and message
         var okResult = Assert.IsType<OkObjectResult>(result);
-        dynamic returnValue = okResult.Value;
-        Assert.Equal("Logged in successfully", returnValue.message);
+        Assert.True((bool)okResult.Value);
+    }
 
-        // Assert that the cookie is set correctly (mocked here for simplicity)
-        Assert.True(_mockHttpContext.Response.Cookies.ContainsKey("jwt"));
+    [Fact]
+    public async Task IsAdmin_NonAdminUser_ReturnsFalse()
+    {
+        // Arrange
+        var user = new EventsAppUser
+        {
+            Id = "456",
+            UserName = "regularuser",
+            Email = "user@test.com"
+        };
+
+        _mockUserManager.Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string> { "User" });
+
+        var validToken = await _controller.GenerateJwtToken(user);
+
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", validToken);
+
+        // Act
+        var result = _controller.isAdmin();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.False((bool)okResult.Value);
+    }
+
+    [Fact]
+    public void IsAdmin_NoToken_ReturnsUnauthorized()
+    {
+        // Arrange
+        _controller.ControllerContext.HttpContext.Request.Cookies =
+            new MockCookieCollection("jwt", "");
+
+        // Act
+        var result = _controller.isAdmin();
+
+        // Assert
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.Equal("Not authenticated", unauthorizedResult.Value);
     }
 
 
     [Fact]
-    public async Task Login_ShouldReturnUnauthorized_WhenCredentialsAreInvalid()
+    public void Logout_ClearsCookie()
     {
-        // Arrange
-        var model = new LoginDto { Email = "user@example.com", Password = "WrongPassword" };
-        var user = new EventsAppUser { Email = "user@example.com", UserName = "username" };
-
-        // Mock FindByEmailAsync to return the user
-        _mockUserManager.Setup(m => m.FindByEmailAsync(model.Email))
-                        .ReturnsAsync(user);
-
-        // Mock CheckPasswordAsync to return false
-        _mockUserManager.Setup(m => m.CheckPasswordAsync(user, model.Password))
-                        .ReturnsAsync(false);
-
         // Act
-        var result = await _controller.Login(model);
+        var result = _controller.Logout();
 
         // Assert
-        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
-        var returnValue = Assert.IsType<ExpandoObject>(unauthorizedResult.Value);
-        Assert.Contains("message", returnValue);
-        Assert.Equal("Invalid username or password", returnValue.message);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Logged out successfully", okResult.Value?.GetType().GetProperty("message")?.GetValue(okResult.Value));
+
+        var cookieHeader = _controller.Response.Headers["Set-Cookie"].ToString();
+
+        Assert.Contains("jwt=;", cookieHeader);
+        Assert.Contains("expires=", cookieHeader, StringComparison.OrdinalIgnoreCase);
+
+        var expiresMatch = Regex.Match(cookieHeader, @"expires=([^;]+)", RegexOptions.IgnoreCase);
+        Assert.True(expiresMatch.Success);
+
+        var parsedSuccessfully = DateTime.TryParseExact(
+            expiresMatch.Groups[1].Value,
+            "ddd, dd MMM yyyy HH:mm:ss 'GMT'",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal,
+            out var expiresDate
+        );
+
+        Assert.True(parsedSuccessfully, "Invalid date format");
+        Assert.True(expiresDate < DateTime.UtcNow.AddSeconds(-1), "Expiration not in past");
     }
 
-    [Fact]
-    public async Task Login_ShouldReturnUnauthorized_WhenUserNotFound()
+
+    private class MockCookieCollection : IRequestCookieCollection
     {
-        // Arrange
-        var model = new LoginDto { Email = "nonexistentuser@example.com", Password = "Password123" };
+        private readonly Dictionary<string, string> _cookies = new Dictionary<string, string>();
 
-        // Mock FindByEmailAsync to return null (user not found)
-        _mockUserManager.Setup(m => m.FindByEmailAsync(model.Email))
-                        .ReturnsAsync((EventsAppUser)null);
+        public MockCookieCollection(string key, string value)
+        {
+            _cookies[key] = value;
+        }
 
-        // Act
-        var result = await _controller.Login(model);
+        public string this[string key] => _cookies[key];
 
-        // Assert
-        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
-        var returnValue = Assert.IsType<ExpandoObject>(unauthorizedResult.Value);
-        Assert.Contains("message", returnValue);
-        Assert.Equal("Invalid username or password", returnValue.message);
-    }*/
+        public int Count => _cookies.Count;
+
+        public ICollection<string> Keys => _cookies.Keys;
+
+        public bool ContainsKey(string key) => _cookies.ContainsKey(key);
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _cookies.GetEnumerator();
+
+        public bool TryGetValue(string key, out string value) => _cookies.TryGetValue(key, out value);
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
 }

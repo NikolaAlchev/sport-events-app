@@ -123,24 +123,20 @@ namespace EventsApp.Controllers
             return Ok(new { message = "Logged in successfully" });
         }
 
-        private async Task<string> GenerateJwtToken(EventsAppUser user)
+        public async Task<string> GenerateJwtToken(EventsAppUser user)
         {
             var claims = new List<Claim>
             {
-/*                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), -> defaults*/  
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
             };
 
-            // Retrieve user roles and add them to claims
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            // Token generation settings
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -157,19 +153,14 @@ namespace EventsApp.Controllers
         [HttpGet("validate")]
         public IActionResult Validation()
         {
-            // Check if the cookie exists
             if (Request.Cookies.TryGetValue("jwt", out string token))
             {
-                // Validate the token (e.g., decode JWT, check expiration, etc.)
-                var isValid = ValidateToken(token);
-
-                if (isValid)
+                if (ValidateToken(token, out ClaimsPrincipal principal))
                 {
-
-                    return Ok(User.FindFirst(ClaimTypes.Name)?.Value);
+                    var username = principal.FindFirst(ClaimTypes.Name)?.Value;
+                    return Ok(username);
                 }
             }
-
             return Unauthorized("Not authenticated");
         }
 
@@ -177,59 +168,46 @@ namespace EventsApp.Controllers
         [HttpGet("is-admin")]
         public IActionResult isAdmin()
         {
-            // Check if the cookie exists
             if (Request.Cookies.TryGetValue("jwt", out string token))
             {
-                // Validate the token (e.g., decode JWT, check expiration, etc.)
-                var isValid = ValidateToken(token);
-
-                if (isValid)
+                if (ValidateToken(token, out ClaimsPrincipal principal))
                 {
-                    var roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value);
-                    if (roles.Contains("Admin"))
-                    {
-                        return Ok(true);
-                    }
-
-                    return Ok(false);
-
+                    var roles = principal.FindAll(ClaimTypes.Role).Select(c => c.Value);
+                    return Ok(roles.Contains("Admin"));
                 }
             }
-
             return Unauthorized("Not authenticated");
         }
 
 
-
-
-        private bool ValidateToken(string token)
+        private bool ValidateToken(string token, out ClaimsPrincipal principal)
         {
+            principal = null;
+
             if (string.IsNullOrEmpty(token))
                 return false;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!); // Same secret key as in GenerateJwtToken
+            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!);
 
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true, // Validate the signing key
-                    IssuerSigningKey = new SymmetricSecurityKey(key), // Signing key to validate against
-                    ValidateIssuer = true, // Ensure the issuer matches
-                    ValidIssuer = _configuration["JwtSettings:Issuer"], // Set issuer from appsettings.json
-                    ValidateAudience = true, // Ensure the audience matches
-                    ValidAudience = _configuration["JwtSettings:Audience"], // Set audience from appsettings.json
-                    ValidateLifetime = true, // Ensure the token is not expired
-                    ClockSkew = TimeSpan.Zero // No additional time for token expiration tolerance
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["JwtSettings:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["JwtSettings:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                // If we reach this point, the token is valid
                 return true;
             }
-            catch (SecurityTokenException)
+            catch
             {
-                // Token validation failed
                 return false;
             }
         }
