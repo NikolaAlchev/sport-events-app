@@ -1,0 +1,24 @@
+[
+    {
+        "id": 10,
+        "firstName": "Lionel",
+        "lastName": "Messi",
+        "nationality": "Argentina",
+        "goals": 25,
+        "assists": 10,
+        "penalties": 5,
+        "currentTeamName": "Inter Miami",
+        "currentTeamCrest": "https://example.com/messi-team.png"
+    },
+    {
+        "id": 7,
+        "firstName": "Cristiano",
+        "lastName": "Ronaldo",
+        "nationality": "Portugal",
+        "goals": 20,
+        "assists": 8,
+        "penalties": 6,
+        "currentTeamName": "Al-Nassr",
+        "currentTeamCrest": "https://example.com/ronaldo-team.png"
+    }
+]

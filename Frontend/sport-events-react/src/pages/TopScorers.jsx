@@ -50,15 +50,15 @@ function TopScorers() {
             <Container className={styles.outerContainer}>
             <div className={styles.players_list}>
                 {data && data.map((player, index) => (
-                    <div className={styles.player_card} key={player.id}>
+                    <div className={styles.player_card} key={player.id} data-testid="player-card">
                         <div className={styles.rank}>{index + 1}</div>
                         <img 
                             src={player.currentTeamCrest} 
                             alt={`${player.currentTeamName} crest`} 
                             className={styles.team_crest}/>
-                        <h3 className={styles.playerName}>{player.firstName} {player.lastName}</h3>
+                        <h3 className={styles.playerName} data-testid="player-name">{player.firstName} {player.lastName}</h3>
                         <Flag code={countryToISO[player.nationality]} className={styles.Nationality} />
-                        <p className={styles.playerStats}>Goals: {player.goals}</p>
+                        <p className={styles.playerStats} data-testid="player-stats">Goals: {player.goals}</p>
                         <p className={styles.playerStats}>Assists: {player.assists}</p>
                         <p className={styles.playerStats}>Penalties: {player.penalties}</p>
                         <p className={styles.playerStats}>Team: {player.currentTeamName}</p>

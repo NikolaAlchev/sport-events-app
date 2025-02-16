@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "name": "Premier League",
+        "emblem": "https://crests.football-data.org/PL.png"
+    },
+    {
+        "id": 2,
+        "name": "La Liga",
+        "emblem": "https://crests.football-data.org/laliga.png"
+    },
+    {
+        "id": 3,
+        "name": "Serie A",
+        "emblem": "https://crests.football-data.org/SA.png"
+    }
+]

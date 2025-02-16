@@ -44,9 +44,9 @@ function Competitions() {
         <div>
             <ImageBanner title={"Select a League"}></ImageBanner>
             <div className={styles.MainContainer}>
-                <div className={styles.grid_container}>
+                <div className={styles.grid_container} data-testid="competition-container">
                     {data && data.map((competition, index) => (
-                        <NavLink to={`/competitions/${competition.id}`} key={competition.id} className={styles.leagueLink}>
+                        <NavLink to={`/competitions/${competition.id}`} key={competition.id} className={styles.leagueLink} data-testid="competition-link">
                             <img
                                 key={index}
                                 src={competition.emblem}
