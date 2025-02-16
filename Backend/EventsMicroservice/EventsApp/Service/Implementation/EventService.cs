@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using ClosedXML.Excel;
 using Domain.DTO;
 using Domain.Identity;
@@ -149,7 +150,8 @@ namespace Service.Implementation
                         Capacity = int.TryParse(GetCellValue(dataRow, columnMapping, "capacity"), out var capacity) ? capacity : (int?)null,
                         Parking = bool.TryParse(GetCellValue(dataRow, columnMapping, "parking"), out var parking) && parking,
                         ImageUrl = GetCellValue(dataRow, columnMapping, "imageurl"),
-                        Date = DateTime.TryParse(GetCellValue(dataRow, columnMapping, "date"), out var date) ? date : (DateTime?)null,
+                        Date = DateTime.TryParseExact(GetCellValue(dataRow, columnMapping, "date"), "dd/MM/yyyy",
+                              CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : (DateTime?)null,
                         StartTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "starttime"), out var startTime) ? startTime : (TimeOnly?)null,
                         EndTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "endtime"), out var endTime) ? endTime : (TimeOnly?)null,
                         GateOpenTime = TimeOnly.TryParse(GetCellValue(dataRow, columnMapping, "gateopentime"), out var gateOpenTime) ? gateOpenTime : (TimeOnly?)null,

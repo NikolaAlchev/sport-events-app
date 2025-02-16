@@ -3,7 +3,7 @@ import styles from "../css/Matches.module.css";
 
 function League({ name, matches, emblem }) {
     return (
-        <div className={styles.LeagueContainer}>
+        <div className={styles.LeagueContainer} data-test="league-container">
             <div className={styles.LeagueInnerContainer}>
                 <img className={styles.LeaguePhoto} src={emblem} alt="" />
                 <h3>{name}</h3>

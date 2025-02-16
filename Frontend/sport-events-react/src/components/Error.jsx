@@ -12,7 +12,7 @@ function Error() {
         <div className={styles.outerContainer}>
             <div className={styles.errorContainer}>
                 <img src={imageUrl} alt="" style={{width: "300px"}}/>
-                <h1>Oops! Something went wrong...</h1>
+                <h1 data-testid="error-message">Oops! Something went wrong...</h1>
                 <button className={styles.refreshButton} onClick={handleRefresh}>Refresh Page</button>
             </div>
         </div>

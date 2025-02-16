@@ -1,0 +1,15 @@
+[
+  {
+    "id": 497653,
+    "competitionName": "Premier League",
+    "homeTeamName": "Brighton & Hove Albion FC",
+    "awayTeamName": "Chelsea FC",
+    "homeTeamScore": 2,
+    "awayTeamScore": 4,
+    "homeTeamCrest": "https://crests.football-data.org/397.png",
+    "awayTeamCrest": "https://crests.football-data.org/61.png",
+    "utcDate": "2025-02-14T15:00:00Z",
+    "status": "FINISHED",
+    "leagueEmblem": "https://crests.football-data.org/PL.png"
+  }
+]

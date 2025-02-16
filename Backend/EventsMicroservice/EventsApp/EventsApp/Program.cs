@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", builder => builder
         .WithOrigins("https://eventsappreact-haewcahuf3cqhwae.northeurope-01.azurewebsites.net")
-        //.WithOrigins("http://localhost:3000")
+        .WithOrigins("http://localhost:3000")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()); // Allow credentials (cookies)

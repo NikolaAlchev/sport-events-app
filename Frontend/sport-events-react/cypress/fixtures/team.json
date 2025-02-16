@@ -1,0 +1,45 @@
+{
+      "id": 61,
+      "name": "Chelsea FC",
+      "venue": "Stamford Bridge",
+      "crest": "https://crests.football-data.org/61.png",
+      "pastMatches": [
+        {
+          "awayTeamCrest": "https://crests.football-data.org/bournemouth.png",
+          "awayTeamId": 1044,
+          "awayTeamName": "AFC Bournemouth",
+          "awayTeamScore": 2,
+          "competitionId": 2021,
+          "competitionName": "Premier League",
+          "homeTeamCrest": "https://crests.football-data.org/61.png",
+          "homeTeamId": 61,
+          "homeTeamName": "Chelsea FC",
+          "homeTeamScore": 2,
+          "id": 497617,
+          "leagueEmblem": "https://crests.football-data.org/PL.png",
+          "referees": null,
+          "status": "FINISHED",
+          "utcDate": "2025-01-14T19:30:00Z",
+          "venue": null
+        },
+        {
+          "awayTeamCrest": "https://crests.football-data.org/76.png",
+          "awayTeamId": 76,
+          "awayTeamName": "Wolverhampton Wanderers FC",
+          "awayTeamScore": 1,
+          "competitionId": 2021,
+          "competitionName": "Premier League",
+          "homeTeamCrest": "https://crests.football-data.org/61.png",
+          "homeTeamId": 61,
+          "homeTeamName": "Chelsea FC",
+          "homeTeamScore": 3,
+          "id": 497629,
+          "leagueEmblem": "https://crests.football-data.org/PL.png",
+          "referees": null,
+          "status": "FINISHED",
+          "utcDate": "2025-01-20T20:00:00Z",
+          "venue": null
+        }
+      ]
+}
+  

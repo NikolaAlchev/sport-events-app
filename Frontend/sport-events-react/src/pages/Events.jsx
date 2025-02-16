@@ -220,7 +220,7 @@ function Events() {
                             {contentLoading ?
                                 <Loader height="100%" />
                                 :
-                                <Row className="g-4">
+                                <Row className="g-4" data-testid="event-list">
                                     {data && data.length > 0 ? (
                                         data.map((event, index) => (
                                             <Col md={{ span: 5, offset: 1 }} key={index} className="mb-3" style={{ marginLeft: "60px", width: "380px" }}>

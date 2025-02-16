@@ -169,7 +169,7 @@ const AddEventAdmin = () => {
                     Capacity: data.capacity || '',
                     Parking: data.parking || false,
                     ImageUrl: data.imageUrl || '',
-                    Date: data.date || '',
+                    Date: data.date.split("T")[0] || '',
                     StartTime: data.startTime || '',
                     EndTime: data.endTime || '',
                     GateOpenTime: data.gateOpenTime || '',

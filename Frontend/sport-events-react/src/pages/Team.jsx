@@ -114,11 +114,11 @@ function Team() {
             <Container>
                 <div className={styles.upperContent}>
                     <div className={styles.teamCrestContainer}>
-                        <img className={styles.teamCrest} src={data.crest} alt="Team Crest" />
-                        <h1 style={{ marginLeft: "20px" }}>{data.name}</h1>
+                        <img className={styles.teamCrest} src={data.crest} data-testid="team-crest" alt="Team Crest" />
+                        <h1 style={{ marginLeft: "20px" }} data-testid="team-name">{data.name}</h1>
                     </div>
                     <div>
-                        <p>{data.venue}</p>
+                        <p data-testid="team-venue">{data.venue}</p>
                     </div>
                 </div>
 
@@ -126,17 +126,17 @@ function Team() {
                     <div className={styles.ButtonBackground}>
                         <div className={`${styles.Button} `} style={{ left: `${buttonPosition}%` }}></div>
                         <div className={`${styles.Text} ${activeButton === "profile" ? styles.ActiveText : styles.NotActiveText}`}
-                            onClick={() => handleButtonClick("profile")}>Profile</div>
+                            onClick={() => handleButtonClick("profile")} data-testid="profile-schedule">Profile</div>
                         <div className={`${styles.Text} ${activeButton === "schedule" ? styles.ActiveText : styles.NotActiveText}`}
-                            onClick={() => handleButtonClick("schedule")}>Schedule</div>
+                            onClick={() => handleButtonClick("schedule")} data-testid="tab-schedule">Schedule</div>
                         <div className={`${styles.Text} ${activeButton === "players" ? styles.ActiveText : styles.NotActiveText}`}
-                            onClick={() => handleButtonClick("players")}>Players</div>
+                            onClick={() => handleButtonClick("players")} data-testid="tab-players">Players</div>
                     </div>
                 </div>
                 <div className={styles.outerContainer}>
                     <div className={styles.Content}>
                         {activeButton === "profile" &&
-                            <Scrollbar style={{ width: "100%", height: 600 }}>
+                            <Scrollbar style={{ width: "100%", height: 600 }} data-testid="profile-content">
                                 {Object.entries(leaguesPast).map(([leagueName, matches]) => (
                                     <TeamLeague key={leagueName} name={leagueName} matches={[...matches].reverse()} emblem={matches[0].leagueEmblem} year={false}/>
                                 ))}
@@ -144,7 +144,7 @@ function Team() {
                         }
 
                         {activeButton === "schedule" &&
-                            <Scrollbar style={{ width: "100%", height: 600 }}>
+                            <Scrollbar style={{ width: "100%", height: 600 }} data-testid="schedule-content">
                                 {Object.entries(leaguesFuture).map(([leagueName, matches]) => (
                                     <TeamLeague key={leagueName} name={leagueName} matches={matches} emblem={matches[0].leagueEmblem} year={false}/>
                                 ))}
@@ -152,7 +152,7 @@ function Team() {
                         }
 
                         {activeButton === "players" &&
-                            <Scrollbar style={{ width: "100%", height: 600 }}>
+                            <Scrollbar style={{ width: "100%", height: 600 }} data-testid="players-content">
                                 {categoryOrder.filter((category) => categorizedSquad[category]).map((category) => (
                                     <TeamPosition key={category} position={category} players={categorizedSquad[category]}/>
                                 ))}

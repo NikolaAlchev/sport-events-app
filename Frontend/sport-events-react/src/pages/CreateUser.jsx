@@ -63,7 +63,9 @@ const CreateUser = () => {
             if (response.ok) {
                 const data = await response.json();
                 setMessage(`Account created successfully`);
-                navigate("/user/login")
+                setTimeout(() => {
+                    navigate("/user/login");
+                }, 500);
             } else {
                 const errorData = await response.json();
                 setError('Error: ' + errorData.errors.map((err) => err.description).join(', '));

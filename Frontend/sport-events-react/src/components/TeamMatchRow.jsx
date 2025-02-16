@@ -14,7 +14,7 @@ function TeamMatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId
     new Date(utcDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })
 
     return (
-        <div className={styles.MatchRow} onClick={goTo}>
+        <div className={styles.MatchRow} onClick={goTo} data-testid="match-row">
             <div className={styles.leftSide}>
                 <div>
                     <p style={{margin: '0px'}}>{dateOnly}</p>

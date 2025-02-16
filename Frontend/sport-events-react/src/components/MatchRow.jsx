@@ -9,7 +9,7 @@ function MatchRow({ homeTeam, awayTeam, score, homeCrest, awayCrest, matchId, ut
 
     const timeOnly = new Date(utcDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     return (
-        <div className={styles.MatchRow} onClick={goTo}>
+        <div className={styles.MatchRow} data-test="match-row" onClick={goTo}>
             <div className={styles.TeamPhotoWrapper}>
                 <img src={homeCrest} alt={`${homeTeam} crest`} className={styles.TeamPhoto} />
             </div>
